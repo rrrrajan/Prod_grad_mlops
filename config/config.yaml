@@ -1,0 +1,5 @@
+artifacts_root: artifacts
+
+data_ingestion:
+  root_dir: artifacts/data_ingestion
+  raw_data_path: data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
