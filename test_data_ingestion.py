@@ -1,12 +1,13 @@
 from src.config.configuration import ConfigurationManager
 from src.components.data_ingestion import DataIngestion
 
-config_manager = ConfigurationManager()
+config = ConfigurationManager()
 
-ingestion_config = config_manager.get_data_ingestion_config()
+data_ingestion_config = config.get_data_ingestion_config()
 
-data_ingestion = DataIngestion(ingestion_config)
+data_ingestion = DataIngestion(data_ingestion_config)
 
-data_ingestion.initiate_data_ingestion()
+train_path, test_path = data_ingestion.initiate_data_ingestion()
 
-print("Method executed successfully!")
+print(train_path)
+print(test_path)

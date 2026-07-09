@@ -21,5 +21,33 @@ COLUMNS:
   TotalCharges: object
   Churn: object
 
-TARGET_COLUMN:
-  name: Churn
+TARGET_COLUMN: Churn
+
+NUMERICAL_COLUMNS:
+  - SeniorCitizen
+  - tenure
+  - MonthlyCharges
+  - TotalCharges
+
+CATEGORICAL_COLUMNS:
+  - gender
+  - Partner
+  - Dependents
+  - PhoneService
+  - MultipleLines
+  - InternetService
+  - OnlineSecurity
+  - OnlineBackup
+  - DeviceProtection
+  - TechSupport
+  - StreamingTV
+  - StreamingMovies
+  - Contract
+  - PaperlessBilling
+  - PaymentMethod
+
+DROP_COLUMNS:
+  - customerID
+
+NUMERIC_CONVERSION_COLUMNS:
+  - TotalCharges
