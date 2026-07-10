@@ -174,6 +174,10 @@ class DataTransformation:
           X_train, y_train = self.split_features_target(train_df)
           X_test, y_test = self.split_features_target(test_df)
 
+          # Encode target
+          y_train = y_train.map({"No": 0, "Yes": 1}).astype(np.int64)
+          y_test = y_test.map({"No": 0, "Yes": 1}).astype(np.int64)
+
           # Create preprocessor
           preprocessor = self.get_preprocessor()
 
@@ -185,13 +189,18 @@ class DataTransformation:
 
           X_test_transformed = preprocessor.transform(X_test)
 
-          train_arr = np.c_[X_train_transformed, np.array(y_train)]
+          logger.info(f"Target dtype: {y_train.dtype}")
+          logger.info(f"Unique target values: {y_train.unique()}")
 
-          test_arr = np.c_[X_test_transformed, np.array(y_test)]
+          logger.info(f"X_train_transformed dtype: {X_train_transformed.dtype}")
+
+          train_arr = np.c_[X_train_transformed, y_train.to_numpy()]
+
+          test_arr = np.c_[X_test_transformed, y_test.to_numpy()]
 
           logger.info("Saving preprocessing object.")
 
-          save_object(path=self.config.preprocessor_object_path, obj=preprocessor)
+          save_object(file_path=self.config.preprocessor_object_path, obj=preprocessor)
 
           logger.info("Saving transformed training array.")
 

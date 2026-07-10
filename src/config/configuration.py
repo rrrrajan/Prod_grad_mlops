@@ -10,6 +10,7 @@ from src.entity.config_entity import (
     DataIngestionConfig,
     DataValidationConfig,
     DataTransformationConfig,
+    ModelTrainerConfig,
 )
 
 from src.utils.common import read_yaml, create_directories
@@ -46,6 +47,7 @@ class ConfigurationManager:
         """
 
         config = self.config["data_ingestion"]
+        
 
         create_directories([config["root_dir"]])
 
@@ -126,3 +128,53 @@ class ConfigurationManager:
             "NUMERIC_CONVERSION_COLUMNS"],)
 
         return data_transformation_config
+    
+
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        """
+        Creates and returns the configuration object for the
+        Model Trainer stage.
+
+        Returns
+        -------
+        ModelTrainerConfig
+        Configuration containing all paths required
+        by the Model Trainer component.
+        """
+
+        config = self.config["model_trainer"]
+        params = self.params
+        transformation_config = self.config["data_transformation"]
+        evaluation_metric = params["model_trainer"]["evaluation_metric"]
+        
+        create_directories([config["root_dir"]])
+
+        model_trainer_config = ModelTrainerConfig(
+        root_dir=Path(config["root_dir"]),
+
+        transformed_train_path = Path(
+            transformation_config["transformed_train_path"]
+        ),
+
+        transformed_test_path = Path(
+            transformation_config["transformed_test_path"]
+        ),
+
+        trained_model_path=Path(
+            config["trained_model_path"]
+        ),
+
+        metrics_file_name=Path(
+            config["metrics_file_name"]
+        ),
+
+        model_report_file_name=Path(
+            config["model_report_file_name"]
+        ),
+        evaluation_metric=params["model_trainer"]["evaluation_metric"],
+    
+
+        model_params=params["model_trainer"]["models"]) # <-- Pass it here
+    
+
+        return model_trainer_config
