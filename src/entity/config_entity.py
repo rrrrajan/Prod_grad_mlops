@@ -131,7 +131,7 @@ class ModelEvaluationConfig:
 
     root_dir: Path
 
-    model_path: Path
+    trained_model_path: Path
     test_array_path: Path
 
     metrics_file_name: Path

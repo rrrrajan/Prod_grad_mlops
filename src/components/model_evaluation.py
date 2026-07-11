@@ -56,10 +56,10 @@ class ModelEvaluation:
       try:
           logger.info(
               "Loading trained model from %s",
-              self.config.model_path
+              self.config.trained_model_path
           )
 
-          model = joblib.load(self.config.model_path)
+          model = joblib.load(self.config.trained_model_path)
 
           logger.info("Trained model loaded successfully.")
 
@@ -285,7 +285,7 @@ class ModelEvaluation:
           )
 
       except Exception as e:
-          raise CustomException(e)
+          raise CustomException(e, sys)
       
 
     def save_confusion_matrix(self, confusion_matrix_data: np.ndarray) -> None:
@@ -576,7 +576,7 @@ class ModelEvaluation:
               "========== Model Evaluation Completed Successfully =========="
           )
 
-          return evaluation_results["metrics"]
+          return evaluation_results
 
       except Exception as e:
           logger.exception(

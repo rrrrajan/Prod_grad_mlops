@@ -201,7 +201,7 @@ class ConfigurationManager:
         model_evaluation_config = ModelEvaluationConfig(
             root_dir=Path(config["root_dir"]),
 
-            model_path=Path(config["model_path"]),
+            trained_model_path=Path(config["trained_model_path"]),
 
             test_array_path=Path(config["test_data_path"]),
 
