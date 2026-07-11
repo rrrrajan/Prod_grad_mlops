@@ -154,3 +154,28 @@ class ModelEvaluationConfig:
     log_model: bool
     register_model: bool
     registered_model_name: str
+
+@dataclass(frozen=True)
+class ModelPusherConfig:
+    """
+    Configuration for the Model Pusher component.
+
+    Attributes
+    ----------
+    root_dir : Path
+        Directory where the pushed artifacts will be stored.
+    source_model_path : Path
+        Path to the trained model produced by the Model Trainer.
+    source_preprocessor_path : Path
+        Path to the fitted preprocessor produced by the Data Transformation stage.
+    pushed_model_path : Path
+        Destination path for the deployed model.
+    pushed_preprocessor_path : Path
+        Destination path for the deployed preprocessor.
+    """
+
+    root_dir: Path
+    source_model_path: Path
+    source_preprocessor_path: Path
+    pushed_model_path: Path
+    pushed_preprocessor_path: Path

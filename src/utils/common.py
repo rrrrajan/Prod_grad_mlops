@@ -1,4 +1,5 @@
 from pathlib import Path
+from src.logger import logger
 import sys
 import json
 import yaml
@@ -50,11 +51,22 @@ def create_directories(path_to_directories: list, verbose: bool = True) -> None:
 
     try:
         for path in path_to_directories:
-            Path(path).mkdir(parents=True, exist_ok=True)
+            directory = Path(path)
 
-            if verbose:
-                logger.info("Created directory at: %s", path)
+            if not directory.exists():
+                directory.mkdir(parents=True, exist_ok=True)
 
+                if verbose:
+                    logger.info(
+                        "Created directory at: %s",
+                        directory,
+                    )
+            else:
+                if verbose:
+                    logger.info(
+                        "Directory already exists: %s",
+                        directory,
+                    )
     except Exception as e:
         raise CustomException(e, sys)
 

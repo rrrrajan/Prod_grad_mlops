@@ -12,6 +12,7 @@ from src.entity.config_entity import (
     DataTransformationConfig,
     ModelTrainerConfig,
     ModelEvaluationConfig,
+    ModelPusherConfig
 )
 
 from src.utils.common import read_yaml, create_directories
@@ -245,3 +246,30 @@ class ConfigurationManager:
         )
 
         return model_evaluation_config
+    
+
+    def get_model_pusher_config(self) -> ModelPusherConfig:
+        """
+        Creates and returns the configuration object for the
+        Model Pusher stage.
+
+        Returns
+        -------
+        ModelPusherConfig
+            Configuration containing all paths required
+            for the Model Pusher component.
+        """
+
+        config = self.config["model_pusher"]
+
+        create_directories([config["root_dir"]])
+
+        model_pusher_config = ModelPusherConfig(
+            root_dir=Path(config["root_dir"]),
+            source_model_path=Path(config["source_model_path"]),
+            source_preprocessor_path=Path(config["source_preprocessor_path"]),
+            pushed_model_path=Path(config["pushed_model_path"]),
+            pushed_preprocessor_path=Path(config["pushed_preprocessor_path"]),
+        )
+
+        return model_pusher_config

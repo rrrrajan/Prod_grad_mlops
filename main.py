@@ -23,6 +23,10 @@ from src.pipeline.stage_05_model_evaluation import (
     ModelEvaluationPipeline,
 )
 
+from src.pipeline.stage_06_model_pusher import (
+    ModelPusherTrainingPipeline,
+)
+
 
 # ===========================
 # Stage 01 : Data Ingestion
@@ -117,3 +121,23 @@ try:
 except Exception as e:
     logger.exception(e)
     raise CustomException(e, sys)
+
+
+# =========================
+# Stage 06 : Model Pusher
+# =========================
+
+STAGE_NAME = "Model Pusher Stage"
+
+try:
+    logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
+
+    pipeline = ModelPusherTrainingPipeline()
+    pipeline.main()
+
+    logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
+
+except Exception as e:
+    logger.exception(e)
+    raise CustomException(e, sys)
+
