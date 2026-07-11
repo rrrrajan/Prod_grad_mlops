@@ -42,3 +42,14 @@ model_trainer:
       n_estimators: 300
       max_depth: 12
       random_state: 42
+
+model_evaluation:
+  experiment_name: Customer_Churn_Classification
+
+  run_name: Production_Run
+
+  log_model: true
+
+  register_model: false
+
+  registered_model_name: CustomerChurnModel

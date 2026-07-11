@@ -97,3 +97,60 @@ class ModelTrainerConfig:
 
     evaluation_metric: str
     model_params: dict[str, Any]
+@dataclass(frozen=True)
+class ModelEvaluationConfig:
+    """
+    Configuration for the Model Evaluation stage.
+
+    Attributes
+    ----------
+    root_dir : Path
+        Directory where evaluation artifacts will be stored.
+
+    test_array_path : Path
+        Path to the transformed testing dataset.
+
+    model_path : Path
+        Path to the trained model.
+
+    metric_file_name : Path
+        Path where evaluation metrics will be saved.
+
+    model_report_file_name : Path
+        Path where detailed evaluation report will be saved.
+
+    target_column : str
+        Name of the target column.
+
+    evaluation_metric : str
+        Primary metric used for selecting the best model.
+
+    random_state : int
+        Random seed for reproducibility.
+    """
+
+    root_dir: Path
+
+    model_path: Path
+    test_array_path: Path
+
+    metrics_file_name: Path
+    metadata_file_name: Path
+    classification_report_file_name: Path
+
+    confusion_matrix_json_file_name: Path
+
+    roc_curve_file_name: Path
+    confusion_matrix_file_name: Path
+
+    target_column: str
+
+    evaluation_metric: str
+    random_state: int
+
+    experiment_name: str
+    run_name: str
+
+    log_model: bool
+    register_model: bool
+    registered_model_name: str

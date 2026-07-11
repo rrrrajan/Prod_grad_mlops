@@ -11,6 +11,7 @@ from src.entity.config_entity import (
     DataValidationConfig,
     DataTransformationConfig,
     ModelTrainerConfig,
+    ModelEvaluationConfig,
 )
 
 from src.utils.common import read_yaml, create_directories
@@ -169,8 +170,7 @@ class ConfigurationManager:
         ),
 
         model_report_file_name=Path(
-            config["model_report_file_name"]
-        ),
+            config["model_report_file_name"]),
         evaluation_metric=params["model_trainer"]["evaluation_metric"],
     
 
@@ -178,3 +178,70 @@ class ConfigurationManager:
     
 
         return model_trainer_config
+    
+
+    def get_model_evaluation_config(self) -> ModelEvaluationConfig:
+        """
+        Creates and returns the configuration object for the
+        Model Evaluation stage.
+
+        Returns
+        -------
+        ModelEvaluationConfig
+            Configuration containing all paths and parameters
+            required for the Model Evaluation component.
+        """
+
+        config = self.config["model_evaluation"]
+        params = self.params
+        schema = self.schema
+
+        create_directories([config["root_dir"]])
+
+        model_evaluation_config = ModelEvaluationConfig(
+            root_dir=Path(config["root_dir"]),
+
+            model_path=Path(config["model_path"]),
+
+            test_array_path=Path(config["test_data_path"]),
+
+            metrics_file_name=Path(config["metrics_file_name"]),
+
+            metadata_file_name=Path(
+               config["metadata_file_name"]
+            ),
+
+            classification_report_file_name=Path(
+                config["classification_report_file_name"]
+            ),
+
+            confusion_matrix_json_file_name=Path(
+                config["confusion_matrix_json_file_name"]
+            ),
+
+            roc_curve_file_name=Path(
+                config["roc_curve_file_name"]
+            ),
+
+            confusion_matrix_file_name=Path(
+                config["confusion_matrix_file_name"]
+            ),
+
+            target_column=schema["TARGET_COLUMN"],
+
+            evaluation_metric=params["model_trainer"]["evaluation_metric"],
+
+            random_state=params["random_state"],
+
+            experiment_name=params["model_evaluation"]["experiment_name"],
+
+            run_name=params["model_evaluation"]["run_name"],
+
+            log_model=params["model_evaluation"]["log_model"],
+
+            register_model=params["model_evaluation"]["register_model"],
+
+            registered_model_name=params["model_evaluation"]["registered_model_name"],
+        )
+
+        return model_evaluation_config

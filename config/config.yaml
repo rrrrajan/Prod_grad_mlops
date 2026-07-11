@@ -30,3 +30,22 @@ model_trainer:
   metrics_file_name: artifacts/model_trainer/metrics.json
 
   model_report_file_name: artifacts/model_trainer/model_report.json
+
+model_evaluation:
+  root_dir: artifacts/model_evaluation
+
+  model_path: artifacts/model_trainer/model.pkl
+
+  test_data_path: artifacts/data_transformation/transformed_test.npy
+
+  metrics_file_name: artifacts/model_evaluation/metrics.json
+
+  metadata_file_name: artifacts/model_evaluation/metadata.json
+
+  classification_report_file_name: artifacts/model_evaluation/classification_report.json
+
+  confusion_matrix_json_file_name: artifacts/model_evaluation/confusion_matrix.json
+
+  roc_curve_file_name: artifacts/model_evaluation/roc_curve.png
+
+  confusion_matrix_file_name: artifacts/model_evaluation/confusion_matrix.png

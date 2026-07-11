@@ -19,6 +19,10 @@ from src.pipeline.stage_04_model_trainer import (
     ModelTrainerTrainingPipeline,
 )
 
+from src.pipeline.stage_05_model_evaluation import (
+    ModelEvaluationPipeline,
+)
+
 
 # ===========================
 # Stage 01 : Data Ingestion
@@ -29,8 +33,8 @@ STAGE_NAME = "Data Ingestion Stage"
 try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
-    obj = DataIngestionTrainingPipeline()
-    obj.main()
+    pipeline = DataIngestionTrainingPipeline()
+    pipeline.main()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
@@ -48,8 +52,8 @@ STAGE_NAME = "Data Validation Stage"
 try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
-    obj = DataValidationTrainingPipeline()
-    obj.main()
+    pipeline = DataValidationTrainingPipeline()
+    pipeline.main()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
@@ -67,8 +71,8 @@ STAGE_NAME = "Data Transformation Stage"
 try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
-    obj = DataTransformationTrainingPipeline()
-    obj.main()
+    pipeline = DataTransformationTrainingPipeline()
+    pipeline.main()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
@@ -86,8 +90,27 @@ STAGE_NAME = "Model Trainer Stage"
 try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
-    obj = ModelTrainerTrainingPipeline()
-    obj.main()
+    pipeline = ModelTrainerTrainingPipeline()
+    pipeline.main()
+
+    logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
+
+except Exception as e:
+    logger.exception(e)
+    raise CustomException(e, sys)
+
+
+# =============================
+# Stage 05 : Model Evaluation
+# =============================
+
+STAGE_NAME = "Model Evaluation Stage"
+
+try:
+    logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
+
+    pipeline = ModelEvaluationPipeline()
+    pipeline.run()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
