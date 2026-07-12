@@ -60,3 +60,8 @@ model_pusher:
   pushed_model_path: artifacts/model_pusher/model.pkl
 
   pushed_preprocessor_path: artifacts/model_pusher/preprocessor.pkl
+
+prediction:
+  model_path: artifacts/model_trainer/model.pkl
+
+  preprocessor_path: artifacts/data_transformation/preprocessor.pkl

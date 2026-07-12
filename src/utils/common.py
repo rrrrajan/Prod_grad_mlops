@@ -113,7 +113,11 @@ def load_object(file_path: Path) -> Any:
     try:
         logger.info("Loading object from: %s", file_path)
 
-        return joblib.load(file_path)
+        obj = joblib.load(file_path)
+
+        logger.info("Object loaded successfully from: %s", file_path)
+
+        return obj
 
     except Exception as e:
         raise CustomException(e, sys)

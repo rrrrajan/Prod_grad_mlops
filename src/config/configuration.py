@@ -1,4 +1,9 @@
 from pathlib import Path
+from src.exception import CustomException
+import sys
+from src.logger import logger
+
+
 
 from src.constants import (
     CONFIG_FILE_PATH,
@@ -12,7 +17,8 @@ from src.entity.config_entity import (
     DataTransformationConfig,
     ModelTrainerConfig,
     ModelEvaluationConfig,
-    ModelPusherConfig
+    ModelPusherConfig,
+    PredictionConfig,
 )
 
 from src.utils.common import read_yaml, create_directories
@@ -273,3 +279,24 @@ class ConfigurationManager:
         )
 
         return model_pusher_config
+    
+
+    def get_prediction_config(self) -> PredictionConfig:
+        """
+        Creates and returns the PredictionConfig required for inference.
+        """
+
+        try:
+            config = self.config["prediction"]
+
+            prediction_config = PredictionConfig(
+                model_path=Path(config["model_path"]),
+                preprocessor_path=Path(config["preprocessor_path"]),
+            )
+
+            logger.info("Prediction configuration loaded successfully.")
+
+            return prediction_config
+
+        except Exception as e:
+            raise CustomException(e, sys)

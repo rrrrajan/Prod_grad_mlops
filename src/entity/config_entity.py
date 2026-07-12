@@ -179,3 +179,9 @@ class ModelPusherConfig:
     source_preprocessor_path: Path
     pushed_model_path: Path
     pushed_preprocessor_path: Path
+
+
+@dataclass(frozen=True)
+class PredictionConfig:
+    model_path: Path
+    preprocessor_path: Path
