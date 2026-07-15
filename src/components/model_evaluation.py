@@ -4,8 +4,6 @@ from pathlib import Path
 import sys
 import joblib
 import matplotlib.pyplot as plt
-import mlflow
-import mlflow.sklearn
 import numpy as np
 from datetime import datetime
 
@@ -22,6 +20,7 @@ from sklearn.metrics import (
 )
 
 from src.entity.config_entity import ModelEvaluationConfig
+from src.experiment_tracking.experiment_tracker import ExperimentTracker
 from src.exception import CustomException
 from src.logger import logger
 
@@ -32,7 +31,7 @@ class ModelEvaluation:
     artifacts.
     """
 
-    def __init__(self, config: ModelEvaluationConfig):
+    def __init__(self, config: ModelEvaluationConfig, tracker: ExperimentTracker):
         """
         Initialize the ModelEvaluation component.
 
@@ -42,6 +41,7 @@ class ModelEvaluation:
             Configuration object for the evaluation stage.
         """
         self.config = config
+        self.tracker = tracker
 
     def load_model(self):
       """
@@ -412,95 +412,75 @@ class ModelEvaluation:
           raise CustomException(e, sys)
       
 
-    def log_to_mlflow(self, model, metrics: dict, X_test: np.ndarray) -> None:
-      """
-      Log evaluation metrics, artifacts, and model to MLflow.
+    def log_experiment(self, model, metrics: dict, X_test: np.ndarray) -> None:
+        """
+        Log evaluation metrics, artifacts, and model using the
+        configured experiment tracker.
+        """
 
-      Parameters
-      ----------
-      model : object
-          Trained machine learning model.
+        try:
+            logger.info("Logging evaluation results to experiment tracker.")
 
-      metrics : dict
-          Evaluation metrics.
-      """
+            with self.tracker.run(run_name=self.config.run_name):
 
-      try:
-          logger.info("Logging evaluation results to MLflow.")
+                # -----------------------------
+                # Tags
+                # -----------------------------
+                self.tracker.set_tags(
+                    {
+                        "stage": "model_evaluation",
+                        "model_type": type(model).__name__,
+                    }
+                )
 
-          mlflow.set_experiment(self.config.experiment_name)
+                # -----------------------------
+                # Metrics
+                # -----------------------------
+                self.tracker.log_metrics(metrics)
 
-          with mlflow.start_run(run_name=self.config.run_name):
+                # -----------------------------
+                # Evaluation parameters
+                # -----------------------------
+                self.tracker.log_params(
+                    {
+                        "evaluation_metric": self.config.evaluation_metric,
+                        "test_samples": len(X_test),
+                        "n_features": X_test.shape[1],
+                    }
+                )
 
-              # Log evaluation metrics
-              mlflow.log_metrics(metrics)
+                # -----------------------------
+                # Model parameters
+                # -----------------------------
+                if hasattr(model, "get_params"):
+                    self.tracker.log_params(model.get_params())
 
-              # Log evaluation configuration
-              mlflow.log_param(
-                  "evaluation_metric",
-                  self.config.evaluation_metric,
-              )
+                # -----------------------------
+                # Evaluation artifacts
+                # -----------------------------
+                artifact_paths = [
+                    self.config.metrics_file_name,
+                    self.config.metadata_file_name,
+                    self.config.classification_report_file_name,
+                    self.config.confusion_matrix_json_file_name,
+                    self.config.confusion_matrix_file_name,
+                    self.config.roc_curve_file_name,
+                ]
 
-              # Log dataset information
-              mlflow.log_param(
-                  "test_samples",
-                  len(X_test),
-              )
+                self.tracker.log_artifacts(artifact_paths)
 
-              mlflow.log_param(
-                  "n_features",
-                  X_test.shape[1],
-              )
+                # -----------------------------
+                # Trained model
+                # -----------------------------
+                if self.config.log_model:
+                    self.tracker.log_model(model)
 
-              # Log model hyperparameters
-              if hasattr(model, "get_params"):
-                  mlflow.log_params(model.get_params())
+            logger.info(
+                "Experiment tracking completed successfully."
+            )
 
-              # Log evaluation artifacts
-              artifact_paths = [
-                  self.config.metrics_file_name,
-                  self.config.metadata_file_name,
-                  self.config.classification_report_file_name,
-                  self.config.confusion_matrix_json_file_name,
-                  self.config.confusion_matrix_file_name,
-                  self.config.roc_curve_file_name,
-              ]
-
-              for artifact in artifact_paths:
-                  if Path(artifact).exists():
-                      mlflow.log_artifact(str(artifact))
-                  else:
-                      logger.warning(
-                          "Artifact not found and will not be logged: %s",
-                          artifact,
-                      )
-
-              # Log model
-              if self.config.log_model:
-
-                  if self.config.register_model:
-
-                      mlflow.sklearn.log_model(
-                          sk_model=model,
-                          name="model",
-                          registered_model_name=(
-                              self.config.registered_model_name
-                          ),
-                      )
-
-                  else:
-
-                      mlflow.sklearn.log_model(
-                          sk_model=model,
-                          name="model",
-                      )
-
-          logger.info(
-              "MLflow logging completed successfully."
-          )
-
-      except Exception as e:
-          raise CustomException(e, sys)
+        except Exception as e:
+            raise CustomException(e, sys)
     
     
     
@@ -566,7 +546,7 @@ class ModelEvaluation:
           )
 
           # Log results to MLflow
-          self.log_to_mlflow(
+          self.log_experiment(
               model=model,
               metrics=evaluation_results["metrics"],
               X_test=X_test,

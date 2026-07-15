@@ -19,6 +19,7 @@ from src.entity.config_entity import (
     ModelEvaluationConfig,
     ModelPusherConfig,
     PredictionConfig,
+    MLflowConfig,
 )
 
 from src.utils.common import read_yaml, create_directories
@@ -300,3 +301,16 @@ class ConfigurationManager:
 
         except Exception as e:
             raise CustomException(e, sys)
+        
+
+    def get_mlflow_config(self) -> MLflowConfig:
+        """
+        Returns MLflow configuration.
+        """
+
+        config = self.config["mlflow"]
+
+        return MLflowConfig(
+           enabled=config["enabled"],
+           tracking_uri=config["tracking_uri"],
+           experiment_name=config["experiment_name"])

@@ -65,3 +65,10 @@ prediction:
   model_path: artifacts/model_trainer/model.pkl
 
   preprocessor_path: artifacts/data_transformation/preprocessor.pkl
+
+mlflow:
+  enabled: true
+
+  tracking_uri: http://localhost:5000
+
+  experiment_name: customer-churn-mlops

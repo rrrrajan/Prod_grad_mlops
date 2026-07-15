@@ -185,3 +185,9 @@ class ModelPusherConfig:
 class PredictionConfig:
     model_path: Path
     preprocessor_path: Path
+
+@dataclass(frozen=True)
+class MLflowConfig:
+    tracking_uri: str
+    experiment_name: str
+    enabled: bool
