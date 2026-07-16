@@ -1,0 +1,48 @@
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+exclude = '''
+(
+    \.git
+  | \.venv
+  | build
+  | dist
+  | artifacts
+)
+'''
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+exclude = [
+    ".git",
+    ".venv",
+    "artifacts",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+]
+
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+addopts = [
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+]

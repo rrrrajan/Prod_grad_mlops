@@ -5,7 +5,6 @@ from src.logger import logger
 from src.exception import CustomException
 import sys
 
-
 STAGE_NAME = "Model Trainer Stage"
 
 
@@ -25,9 +24,7 @@ class ModelTrainerTrainingPipeline:
 
         model_trainer_config = config.get_model_trainer_config()
 
-        model_trainer = ModelTrainer(
-            config=model_trainer_config
-        )
+        model_trainer = ModelTrainer(config=model_trainer_config)
 
         model_trainer.initiate_model_trainer()
 

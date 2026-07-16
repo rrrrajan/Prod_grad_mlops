@@ -27,7 +27,6 @@ from src.pipeline.stage_06_model_pusher import (
     ModelPusherTrainingPipeline,
 )
 
-
 # ===========================
 # Stage 01 : Data Ingestion
 # ===========================
@@ -140,4 +139,3 @@ try:
 except Exception as e:
     logger.exception(e)
     raise CustomException(e, sys)
-

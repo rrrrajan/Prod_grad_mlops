@@ -1,7 +1,5 @@
 from src.config.configuration import ConfigurationManager
 from src.components.data_validation import DataValidation
-from src.logger import logger
-
 
 STAGE_NAME = "Data Validation Stage"
 

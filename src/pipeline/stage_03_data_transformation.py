@@ -4,7 +4,6 @@ from src.logger import logger
 from src.exception import CustomException
 import sys
 
-
 STAGE_NAME = "Data Transformation Stage"
 
 
@@ -23,9 +22,7 @@ class DataTransformationTrainingPipeline:
         config = ConfigurationManager()
         data_transformation_config = config.get_data_transformation_config()
 
-        data_transformation = DataTransformation(
-            config=data_transformation_config
-        )
+        data_transformation = DataTransformation(config=data_transformation_config)
 
         data_transformation.initiate_data_transformation()
 

@@ -3,7 +3,6 @@ from src.exception import CustomException
 from src.logger import logger
 import sys
 
-
 STAGE_NAME = "Model Evaluation Stage"
 
 

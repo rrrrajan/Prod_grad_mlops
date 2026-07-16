@@ -1,6 +1,8 @@
+from fastapi.middleware.cors import CORSMiddleware
+
 from contextlib import asynccontextmanager
 
-from fastapi.middleware.cors import CORSMiddleware
+from app.middleware.exception_handler import register_exception_handlers
 
 from app.middleware.logging_middleware import LoggingMiddleware
 
@@ -8,19 +10,12 @@ from app.core.config import settings
 
 from app.api.v1.routes import router
 
-from app.middleware.exception_handler import (
-    register_exception_handlers,
-)
-
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 
 from src.logger import logger
 from src.pipeline.prediction_pipeline import (
-    CustomData,
     PredictionPipeline,
 )
-from src.schema.request import CustomerRequest
-from src.schema.response import PredictionResponse
 
 
 def get_prediction_pipeline(request: Request) -> PredictionPipeline:
@@ -40,7 +35,7 @@ async def lifespan(app: FastAPI):
 
     logger.info("=" * 60)
     logger.info("Starting %s v%s...", settings.APP_NAME, settings.APP_VERSION)
-    
+
     logger.info("=" * 60)
 
     try:
@@ -70,7 +65,8 @@ app = FastAPI(
     license_info={
         "name": settings.API_LICENSE_NAME,
     },
-    lifespan=lifespan)
+    lifespan=lifespan,
+)
 
 register_exception_handlers(app)
 
@@ -85,9 +81,7 @@ app.add_middleware(
 
 app.add_middleware(LoggingMiddleware)
 
-app.include_router(
-    router,
-    prefix=settings.API_PREFIX)
+app.include_router(router, prefix=settings.API_PREFIX)
 
 
 @app.get("/")
@@ -96,9 +90,9 @@ def home() -> dict[str, str]:
     Root endpoint.
     """
     return {
-    "message": settings.APP_NAME,
-    "version": settings.APP_VERSION,
-    "status": "running",
+        "message": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "status": "running",
     }
 
 
@@ -110,4 +104,3 @@ def health() -> dict[str, str]:
     return {
         "status": "healthy",
     }
-

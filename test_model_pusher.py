@@ -7,7 +7,6 @@ from src.pipeline.stage_06_model_pusher import (
     ModelPusherTrainingPipeline,
 )
 
-
 if __name__ == "__main__":
     try:
         logger.info("*" * 80)

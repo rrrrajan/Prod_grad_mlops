@@ -7,7 +7,6 @@ from src.experiment_tracking.mlflow_tracker import MLflowTracker
 from src.experiment_tracking.experiment_tracker import ExperimentTracker
 
 
-
 class ModelEvaluationPipeline:
     """
     Pipeline class for the Model Evaluation stage.
@@ -29,37 +28,25 @@ class ModelEvaluationPipeline:
 
         try:
             logger.info("=" * 60)
-            
-            
-            logger.info(
-                "Starting Model Evaluation Pipeline."
-            )
+
+            logger.info("Starting Model Evaluation Pipeline.")
 
             config_manager = ConfigurationManager()
 
-            mlflow_config = (
-                config_manager.get_mlflow_config()
-            )
+            mlflow_config = config_manager.get_mlflow_config()
 
-                            
-            tracker: ExperimentTracker = MLflowTracker(mlflow_config)   
-            
-            model_evaluation_config = (
-                config_manager.get_model_evaluation_config()
-            )
+            tracker: ExperimentTracker = MLflowTracker(mlflow_config)
+
+            model_evaluation_config = config_manager.get_model_evaluation_config()
 
             model_evaluation = ModelEvaluation(
                 config=model_evaluation_config,
                 tracker=tracker,
             )
-       
-            metrics = (
-                model_evaluation.initiate_model_evaluation()
-            )
 
-            logger.info(
-                "Model Evaluation Pipeline completed successfully."
-            )
+            metrics = model_evaluation.initiate_model_evaluation()
+
+            logger.info("Model Evaluation Pipeline completed successfully.")
 
             logger.info("=" * 60)
 
@@ -69,7 +56,5 @@ class ModelEvaluationPipeline:
             )
 
         except Exception as e:
-            logger.exception(
-                "Error occurred in Model Evaluation Pipeline."
-            )
+            logger.exception("Error occurred in Model Evaluation Pipeline.")
             raise CustomException(e, sys)

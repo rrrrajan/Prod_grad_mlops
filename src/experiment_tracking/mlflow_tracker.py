@@ -12,6 +12,7 @@ from src.entity.config_entity import MLflowConfig
 from src.experiment_tracking.experiment_tracker import ExperimentTracker
 from src.logger import logger
 
+
 class MLflowTracker(ExperimentTracker):
     """
     MLflow implementation of the ExperimentTracker interface.
@@ -23,9 +24,6 @@ class MLflowTracker(ExperimentTracker):
         if self.config.enabled:
             mlflow.set_tracking_uri(self.config.tracking_uri)
             mlflow.set_experiment(self.config.experiment_name)
-
-
-
 
     @contextmanager
     def run(self, run_name: str | None = None) -> Generator[None, None, None]:
@@ -43,18 +41,15 @@ class MLflowTracker(ExperimentTracker):
 
             self.end_run()
 
-
     def start_run(self, run_name: str | None = None) -> None:
         """
         Start an MLflow run.
         """
-       
-        if not self.config.enabled:
-           return 
 
-        logger.info(
-          "Starting MLflow run: %s",
-          run_name)
+        if not self.config.enabled:
+            return
+
+        logger.info("Starting MLflow run: %s", run_name)
 
         mlflow.start_run(run_name=run_name)
 
@@ -63,14 +58,14 @@ class MLflowTracker(ExperimentTracker):
         End the active MLflow run.
         """
         if not self.config.enabled:
-           return 
-            
+            return
+
         logger.info("Ending MLflow run.")
         mlflow.end_run()
 
     def log_params(self, params: dict[str, Any]) -> None:
         if not self.config.enabled:
-           return
+            return
         mlflow.log_params(params)
 
     def log_metrics(self, metrics: dict[str, float]) -> None:
@@ -83,8 +78,8 @@ class MLflowTracker(ExperimentTracker):
 
     def log_artifact(self, artifact_path: str) -> None:
         if not self.config.enabled:
-           return
-           
+            return
+
         mlflow.log_artifact(artifact_path)
 
     def log_artifacts(self, artifact_paths: Iterable[str]) -> None:
@@ -104,7 +99,6 @@ class MLflowTracker(ExperimentTracker):
                     artifact_path,
                 )
 
-    
     def log_model(self, model: Any, artifact_path: str = "model") -> None:
         """
         Log the trained model to MLflow.
@@ -114,15 +108,14 @@ class MLflowTracker(ExperimentTracker):
             return
 
         logger.info("Logging trained model to MLflow.")
-        
+
         mlflow.sklearn.log_model(
             sk_model=model,
             name=artifact_path,
         )
 
-
     def set_tags(self, tags: dict[str, str]) -> None:
         if not self.config.enabled:
             return
-            
+
         mlflow.set_tags(tags)

@@ -25,6 +25,7 @@ class DataIngestionConfig:
 
     test_size: float
 
+
 @dataclass(frozen=True)
 class DataValidationConfig:
     """
@@ -35,6 +36,7 @@ class DataValidationConfig:
     STATUS_FILE: Path
     unzip_data_dir: Path
     all_schema: dict
+
 
 @dataclass(frozen=True)
 class DataTransformationConfig:
@@ -59,6 +61,7 @@ class DataTransformationConfig:
     numerical_columns: list[str]
     categorical_columns: list[str]
     numeric_conversion_columns: list[str]
+
 
 @dataclass(frozen=True)
 class ModelTrainerConfig:
@@ -86,6 +89,7 @@ class ModelTrainerConfig:
         Path to the JSON file containing evaluation metrics
         for all candidate models.
     """
+
     root_dir: Path
 
     transformed_train_path: Path
@@ -97,6 +101,8 @@ class ModelTrainerConfig:
 
     evaluation_metric: str
     model_params: dict[str, Any]
+
+
 @dataclass(frozen=True)
 class ModelEvaluationConfig:
     """
@@ -155,6 +161,7 @@ class ModelEvaluationConfig:
     register_model: bool
     registered_model_name: str
 
+
 @dataclass(frozen=True)
 class ModelPusherConfig:
     """
@@ -185,6 +192,7 @@ class ModelPusherConfig:
 class PredictionConfig:
     model_path: Path
     preprocessor_path: Path
+
 
 @dataclass(frozen=True)
 class MLflowConfig:

@@ -3,14 +3,11 @@ from src.logger import logger
 import sys
 import json
 import yaml
-import logging
 import joblib
 
 from typing import Any
 
 from src.exception import CustomException
-
-logger = logging.getLogger(__name__)
 
 
 def read_yaml(path_to_yaml: Path) -> dict[str, Any]:

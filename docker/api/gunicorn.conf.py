@@ -29,7 +29,6 @@ Gunicorn manages worker processes while Uvicorn handles ASGI requests.
 
 import os
 
-
 # =============================================================================
 # NETWORK CONFIGURATION
 # =============================================================================
@@ -142,9 +141,7 @@ timeout = int(os.getenv("GUNICORN_TIMEOUT", "120"))
 # Gunicorn waits 30 seconds before forcefully terminating
 # the worker.
 #
-graceful_timeout = int(
-    os.getenv("GUNICORN_GRACEFUL_TIMEOUT", "30")
-)
+graceful_timeout = int(os.getenv("GUNICORN_GRACEFUL_TIMEOUT", "30"))
 
 
 # Keep an HTTP connection open for additional requests.

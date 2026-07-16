@@ -11,6 +11,7 @@ from src.schema.request import CustomerRequest
 from src.schema.response import PredictionResponse
 from app.core.config import settings
 
+
 def get_prediction_pipeline(request: Request) -> PredictionPipeline:
     """
     Return the PredictionPipeline instance stored in the
@@ -21,12 +22,6 @@ def get_prediction_pipeline(request: Request) -> PredictionPipeline:
 
 router = APIRouter()
 
-
-@router.get(
-    "/health",
-    tags=["Health"],
-    summary="Health Check",
-)
 
 @router.get(
     "/ready",
@@ -54,30 +49,20 @@ def readiness(
     }
 
 
-
-def health() -> dict[str, str]:
-    """
-    Health check endpoint.
-    """
-    return {
-        "status": "healthy",
-    }
-
 @router.post(
     "/predict",
     response_model=PredictionResponse,
     tags=["Prediction"],
     summary="Predict Customer Churn",
 )
-
-
-def predict(customer: CustomerRequest,
-    pipeline: PredictionPipeline = Depends(get_prediction_pipeline)) -> PredictionResponse:
+def predict(
+    customer: CustomerRequest,
+    pipeline: PredictionPipeline = Depends(get_prediction_pipeline),
+) -> PredictionResponse:
     """
     Predict customer churn.
     """
 
-    
     logger.info("Received prediction request.")
 
     custom_data = CustomData(
@@ -109,8 +94,7 @@ def predict(customer: CustomerRequest,
     result = pipeline.predict(features)
 
     logger.info(
-        "Prediction completed successfully. "
-        "Prediction=%s, Label=%s, Probability=%s",
+        "Prediction completed successfully. " "Prediction=%s, Label=%s, Probability=%s",
         result["prediction"],
         result["label"],
         result["probability"],
@@ -121,5 +105,3 @@ def predict(customer: CustomerRequest,
         probability=result["probability"],
         model_version=settings.APP_VERSION,
     )
-      
-

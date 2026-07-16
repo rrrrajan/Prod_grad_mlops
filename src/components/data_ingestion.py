@@ -10,6 +10,7 @@ from src.entity.config_entity import DataIngestionConfig
 from src.exception import CustomException
 from src.logger import logger
 
+
 class DataIngestion:
     """
     Responsible for ingesting the raw dataset and preparing
@@ -65,12 +66,10 @@ class DataIngestion:
                 df,
                 test_size=self.config.test_size,
                 random_state=self.config.random_state,
-                stratify=df[self.config.target_column]
+                stratify=df[self.config.target_column],
             )
 
-            logger.info(
-                 "Training dataset shape: %s ",
-                train_df.shape)
+            logger.info("Training dataset shape: %s ", train_df.shape)
 
             logger.info(
                 "Testing dataset shape: %s",

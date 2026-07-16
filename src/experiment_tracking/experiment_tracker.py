@@ -4,7 +4,6 @@ from typing import Any
 from collections.abc import Iterable
 
 
-
 class ExperimentTracker(ABC):
     """
     Abstract interface for experiment tracking backends.

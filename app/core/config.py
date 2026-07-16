@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     )
 
     API_CONTACT_NAME: str = Field(
-        default="Raghvendra Bhalla",    
+        default="Raghvendra Bhalla",
     )
 
     API_CONTACT_EMAIL: str = Field(

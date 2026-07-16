@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-
 # ==========================================================
 # Data Ingestion Artifact
 # ==========================================================
+
 
 @dataclass(frozen=True)
 class DataIngestionArtifact:
@@ -19,6 +19,7 @@ class DataIngestionArtifact:
 # ==========================================================
 # Data Validation Artifact
 # ==========================================================
+
 
 @dataclass(frozen=True)
 class DataValidationArtifact:
@@ -36,6 +37,7 @@ class DataValidationArtifact:
 # Data Transformation Artifact
 # ==========================================================
 
+
 @dataclass(frozen=True)
 class DataTransformationArtifact:
     """
@@ -50,6 +52,7 @@ class DataTransformationArtifact:
 # ==========================================================
 # Model Trainer Artifact
 # ==========================================================
+
 
 @dataclass(frozen=True)
 class ModelTrainerArtifact:

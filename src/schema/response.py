@@ -7,9 +7,7 @@ class PredictionResponse(BaseModel):
     """
 
     prediction: str = Field(
-        ...,
-        description="Predicted churn label",
-        example="Yes",
+        ..., description="Predicted churn label", json_schema_extra={"example": "Yes"}
     )
 
     probability: float | None = Field(
@@ -17,10 +15,7 @@ class PredictionResponse(BaseModel):
         ge=0.0,
         le=1.0,
         description="Probability of churn",
-        example=0.91,
+        json_schema_extra={"example": 0.91},
     )
 
-    model_version: str = Field(
-        ...,
-        example="1.0.0",
-    )
+    model_version: str = Field(..., json_schema_extra={"example": "1.0.0"})

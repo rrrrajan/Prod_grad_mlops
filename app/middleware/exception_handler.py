@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -28,7 +28,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             content={
                 "success": False,
                 "message": exc.detail,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
 
@@ -48,7 +48,7 @@ def register_exception_handlers(app: FastAPI) -> None:
                 "success": False,
                 "message": "Validation Error",
                 "errors": exc.errors(),
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )
 
@@ -64,6 +64,6 @@ def register_exception_handlers(app: FastAPI) -> None:
             content={
                 "success": False,
                 "message": "Internal Server Error",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             },
         )

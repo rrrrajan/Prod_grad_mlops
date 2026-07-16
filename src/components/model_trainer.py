@@ -1,15 +1,13 @@
-import json
 import joblib
 import numpy as np
 import sys
 
 from src.utils.common import save_json
-from src.logger import logger
 from src.exception import CustomException
-
+from src.logger import logger
 
 from pathlib import Path
-from typing import Dict, Any, Tuple
+from typing import Dict, Any
 
 from sklearn.base import ClassifierMixin
 
@@ -21,7 +19,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     GradientBoostingClassifier,
     AdaBoostClassifier,
-    ExtraTreesClassifier
+    ExtraTreesClassifier,
 )
 
 from sklearn.metrics import (
@@ -29,11 +27,9 @@ from sklearn.metrics import (
     precision_score,
     recall_score,
     f1_score,
-    roc_auc_score
+    roc_auc_score,
 )
 
-from src.logger import logger
-from src.exception import CustomException
 from src.entity.config_entity import ModelTrainerConfig
 from src.entity.artifact_entity import ModelTrainerArtifact
 
@@ -53,12 +49,10 @@ class ModelTrainer:
         "extra_trees": ExtraTreesClassifier,
     }
 
-
     def __init__(self, config: ModelTrainerConfig):
         self.config = config
 
     def load_data(self) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    
         """
         Load transformed training and testing datasets.
 
@@ -96,7 +90,7 @@ class ModelTrainer:
 
         except Exception as e:
             logger.exception("Failed to load transformed datasets.")
-            raise CustomException(e, sys)   
+            raise CustomException(e, sys)
 
     def get_models(self) -> Dict[str, ClassifierMixin]:
         """
@@ -122,10 +116,7 @@ class ModelTrainer:
                     continue
 
                 if model_name not in self._SUPPORTED_MODELS:
-                    raise CustomException(
-                        f"Unsupported model: {model_name}",
-                        sys
-                    )
+                    raise CustomException(f"Unsupported model: {model_name}", sys)
 
                 model_class = self._SUPPORTED_MODELS[model_name]
 
@@ -143,7 +134,6 @@ class ModelTrainer:
                     model_params,
                 )
 
-            
             if not models:
                 raise CustomException(
                     "No enabled models found in configuration.",
@@ -157,10 +147,15 @@ class ModelTrainer:
         except Exception as e:
             logger.exception("Failed to initialize models.")
             raise CustomException(e, sys)
-        
 
-    def train_and_evaluate(self, X_train: np.ndarray, X_test: np.ndarray, y_train: np.ndarray,
-      y_test: np.ndarray, models: Dict[str, ClassifierMixin]) -> Dict[str, Dict[str, Any]]:
+    def train_and_evaluate(
+        self,
+        X_train: np.ndarray,
+        X_test: np.ndarray,
+        y_train: np.ndarray,
+        y_test: np.ndarray,
+        models: Dict[str, ClassifierMixin],
+    ) -> Dict[str, Dict[str, Any]]:
         """
         Train and evaluate all configured machine learning models.
 
@@ -272,10 +267,11 @@ class ModelTrainer:
 
             logger.exception("Failed during model training and evaluation.")
 
-            raise CustomException(e, sys)    
-        
+            raise CustomException(e, sys)
 
-    def select_best_model(self, results: Dict[str, Dict[str, Any]]) -> tuple[str, ClassifierMixin, Dict[str, Any]]:
+    def select_best_model(
+        self, results: Dict[str, Dict[str, Any]]
+    ) -> tuple[str, ClassifierMixin, Dict[str, Any]]:
         """
         Select the best-performing model based on the configured metric.
 
@@ -346,9 +342,7 @@ class ModelTrainer:
                     best_model = result["model"]
 
                     best_metrics = {
-                        key: value
-                        for key, value in result.items()
-                        if key != "model"
+                        key: value for key, value in result.items() if key != "model"
                     }
 
             if best_model is None:
@@ -373,8 +367,7 @@ class ModelTrainer:
 
             logger.exception("Failed to select the best model.")
 
-            raise CustomException(e, sys)    
-        
+            raise CustomException(e, sys)
 
     def save_model(self, model) -> None:
         """
@@ -398,7 +391,6 @@ class ModelTrainer:
 
         except Exception as e:
             raise CustomException(e, sys)
-    
 
     def save_metrics(self, metrics: dict) -> None:
         """
@@ -416,16 +408,12 @@ class ModelTrainer:
 
             metrics_path.parent.mkdir(parents=True, exist_ok=True)
 
-            save_json(
-                file_path=metrics_path,
-                data=metrics
-            )
+            save_json(file_path=metrics_path, data=metrics)
 
             logger.info(f"Metrics saved at {metrics_path}")
 
         except Exception as e:
             raise CustomException(e, sys)
-
 
     def initiate_model_trainer(self) -> ModelTrainerArtifact:
         """
@@ -475,9 +463,7 @@ class ModelTrainer:
             for model_name, result in results.items():
 
                 model_report[model_name] = {
-                    key: value
-                    for key, value in result.items()
-                    if key != "model"
+                    key: value for key, value in result.items() if key != "model"
                 }
 
             save_json(

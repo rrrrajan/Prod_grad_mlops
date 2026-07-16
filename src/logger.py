@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from pathlib import Path
 
 from src.constants import ARTIFACTS_DIR
 
@@ -21,10 +20,7 @@ LOG_FILE_PATH = RUN_LOG_DIR / "running.log"
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s] %(levelname)s - %(name)s - %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_FILE_PATH),
-        logging.StreamHandler()
-    ]
+    handlers=[logging.FileHandler(LOG_FILE_PATH), logging.StreamHandler()],
 )
 
 # Project logger

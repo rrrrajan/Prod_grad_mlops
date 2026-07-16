@@ -8,11 +8,8 @@ from src.logger import logger
 from src.exception import CustomException
 from src.utils.common import load_object
 
-
 DEFAULT_MODEL_PATH = Path("artifacts/model_pusher/model.pkl")
-DEFAULT_PREPROCESSOR_PATH = Path(
-    "artifacts/model_pusher/preprocessor.pkl"
-)
+DEFAULT_PREPROCESSOR_PATH = Path("artifacts/model_pusher/preprocessor.pkl")
 
 
 class CustomData:
@@ -136,7 +133,6 @@ class PredictionPipeline:
         except Exception as e:
             raise CustomException(e, sys)
 
-    
     def predict(self, features: pd.DataFrame) -> dict[str, Any]:
         """
         Predict customer churn.
@@ -159,9 +155,7 @@ class PredictionPipeline:
 
             logger.info("Generating prediction.")
 
-            prediction = int(
-                self.model.predict(transformed_features)[0]
-            )
+            prediction = int(self.model.predict(transformed_features)[0])
 
             probability = None
 
@@ -177,8 +171,7 @@ class PredictionPipeline:
             }
 
             logger.info(
-                "Prediction successful. "
-                "Prediction=%s, Label=%s, Probability=%s",
+                "Prediction successful. " "Prediction=%s, Label=%s, Probability=%s",
                 result["prediction"],
                 result["label"],
                 result["probability"],
