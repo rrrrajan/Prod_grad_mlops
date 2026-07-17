@@ -19,7 +19,7 @@ class ModelPusherTrainingPipeline:
         """Initialize the Model Pusher training pipeline."""
         pass
 
-    def main(self) -> None:
+    def run(self) -> None:
         """
         Execute the Model Pusher pipeline.
 
