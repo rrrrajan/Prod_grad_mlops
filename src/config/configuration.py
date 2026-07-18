@@ -20,6 +20,7 @@ from src.entity.config_entity import (
     PredictionConfig,
     MLflowConfig,
     DeploymentConfig,
+    DockerBuilderConfig,
 )
 
 from src.utils.common import read_yaml, create_directories
@@ -282,3 +283,32 @@ class ConfigurationManager:
             registry_uri=config["registry_uri"],
             experiment_name=config["experiment_name"],
         )
+
+
+    def get_docker_builder_config(self) -> DockerBuilderConfig:
+        """
+        Creates and returns the configuration object for the
+        Docker Builder stage.
+
+        Returns
+        -------
+        DockerBuilderConfig
+            Configuration containing all settings required
+            for the Docker Builder component.
+        """
+
+        config = self.config["docker_builder"]
+
+        create_directories([config["root_dir"]])
+
+        docker_builder_config = DockerBuilderConfig(
+            root_dir=Path(config["root_dir"]),
+            image_name=config["image_name"],
+            image_tag=config["image_tag"],
+            dockerfile_path=Path(config["dockerfile_path"]),
+            context_path=Path(config["context_path"]),
+        )
+
+        logger.info("Docker Builder configuration initialized.")
+
+        return docker_builder_config

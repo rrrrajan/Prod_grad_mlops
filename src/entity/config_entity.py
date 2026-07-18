@@ -211,3 +211,20 @@ class DeploymentConfig:
     root_dir: Path
     registered_model_name: str
     downloaded_model_dir: Path
+
+
+@dataclass(frozen=True)
+class DockerBuilderConfig:
+    """
+    Configuration for the Docker Builder component.
+    """
+
+    root_dir: Path
+
+    image_name: str
+
+    image_tag: str
+
+    dockerfile_path: Path
+
+    context_path: Path

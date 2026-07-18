@@ -90,3 +90,14 @@ deployment:
   registered_model_name: CustomerChurnModel
 
   downloaded_model_dir: artifacts/deployment/downloaded_model
+
+docker_builder:
+  root_dir: artifacts/docker_builder
+
+  image_name: customer-churn-api
+
+  image_tag: latest
+
+  dockerfile_path: docker/api/Dockerfile
+
+  context_path: .
