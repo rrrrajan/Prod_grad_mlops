@@ -50,6 +50,6 @@ model_evaluation:
 
   log_model: true
 
-  register_model: false
+  register_model: true
 
   registered_model_name: CustomerChurnModel

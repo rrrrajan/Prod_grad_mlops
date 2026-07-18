@@ -441,7 +441,21 @@ class ModelEvaluation:
                 # Trained model
                 # -----------------------------
                 if self.config.log_model:
-                    self.tracker.log_model(model)
+
+                    registered_model_name = None
+
+                    if self.config.register_model:
+                        registered_model_name = self.config.registered_model_name
+
+                        logger.info("Model will be registered as '%s'.",
+                            registered_model_name,
+                        )
+
+                    self.tracker.log_model(
+                        model=model,
+                        artifact_path="model",
+                        registered_model_name=registered_model_name,
+                    )
 
             logger.info("Experiment tracking completed successfully.")
 

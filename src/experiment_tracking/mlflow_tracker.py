@@ -99,20 +99,32 @@ class MLflowTracker(ExperimentTracker):
                     artifact_path,
                 )
 
-    def log_model(self, model: Any, artifact_path: str = "model") -> None:
+    def log_model(self, model: Any, artifact_path: str = "model", registered_model_name: str | None = None,
+    ) -> None:
+        ...
         """
         Log the trained model to MLflow.
         """
 
-        if not self.config.enabled:
-            return
-
         logger.info("Logging trained model to MLflow.")
 
-        mlflow.sklearn.log_model(
-            sk_model=model,
-            name=artifact_path,
-        )
+        if registered_model_name:
+            logger.info(
+                "Registering model as '%s'.",
+                registered_model_name,
+            )
+
+            mlflow.sklearn.log_model(
+                sk_model=model,
+                name=artifact_path,
+                registered_model_name=registered_model_name,
+            )
+
+        else:
+            mlflow.sklearn.log_model(
+                sk_model=model,
+                name=artifact_path,
+            )
 
     def set_tags(self, tags: dict[str, str]) -> None:
         if not self.config.enabled:

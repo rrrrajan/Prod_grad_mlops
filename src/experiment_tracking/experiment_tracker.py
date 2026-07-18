@@ -62,12 +62,14 @@ class ExperimentTracker(ABC):
         ...
 
     @abstractmethod
-    def log_model(
-        self,
-        model: Any,
-        artifact_path: str = "model",
+    def log_model(self, model: Any, artifact_path: str = "model", registered_model_name: str | None = None,
     ) -> None:
-        """Log the trained model."""
+        """
+        Log the trained model.
+
+        If a registered_model_name is provided, the implementation may
+        register the model in its model registry.
+        """
         ...
 
     @abstractmethod

@@ -19,6 +19,7 @@ from src.entity.config_entity import (
     ModelPusherConfig,
     PredictionConfig,
     MLflowConfig,
+    DeploymentConfig,
 )
 
 from src.utils.common import read_yaml, create_directories
@@ -197,30 +198,52 @@ class ConfigurationManager:
         return model_evaluation_config
 
     def get_model_pusher_config(self) -> ModelPusherConfig:
-        """
-        Creates and returns the configuration object for the
-        Model Pusher stage.
+            """
+            Creates and returns the configuration object for the
+            Model Pusher stage.
 
-        Returns
-        -------
-        ModelPusherConfig
-            Configuration containing all paths required
-            for the Model Pusher component.
-        """
+            Returns
+            -------
+            ModelPusherConfig
+                Configuration containing all paths required
+                for the Model Pusher component.
+            """
 
-        config = self.config["model_pusher"]
+            config = self.config["model_pusher"]
 
-        create_directories([config["root_dir"]])
+            create_directories([config["root_dir"]])
 
-        model_pusher_config = ModelPusherConfig(
-            root_dir=Path(config["root_dir"]),
-            source_model_path=Path(config["source_model_path"]),
-            source_preprocessor_path=Path(config["source_preprocessor_path"]),
-            pushed_model_path=Path(config["pushed_model_path"]),
-            pushed_preprocessor_path=Path(config["pushed_preprocessor_path"]),
-        )
+            model_pusher_config = ModelPusherConfig(
+                root_dir=Path(config["root_dir"]),
+                source_model_path=Path(config["source_model_path"]),
+                source_preprocessor_path=Path(config["source_preprocessor_path"]),
+                pushed_model_path=Path(config["pushed_model_path"]),
+                pushed_preprocessor_path=Path(config["pushed_preprocessor_path"]),
+            )
 
-        return model_pusher_config
+            return model_pusher_config
+    
+    def get_deployment_config(self) -> DeploymentConfig:
+            """
+            Creates and returns the configuration for the Deployment component.
+            """
+
+            deployment_config = self.config["deployment"]
+            mlflow_config = self.config["mlflow"]
+
+            create_directories([deployment_config["root_dir"]])
+
+            config = DeploymentConfig(
+                root_dir=Path(deployment_config["root_dir"]),
+                tracking_uri=mlflow_config["tracking_uri"],
+                registry_uri=mlflow_config["registry_uri"],
+                registered_model_name=deployment_config["registered_model_name"],
+            )
+
+            logger.info("Deployment configuration initialized.")
+
+            return config
+
 
     def get_prediction_config(self) -> PredictionConfig:
         """

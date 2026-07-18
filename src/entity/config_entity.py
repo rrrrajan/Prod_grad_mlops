@@ -199,3 +199,15 @@ class MLflowConfig:
     tracking_uri: str
     experiment_name: str
     enabled: bool
+
+
+@dataclass(frozen=True)
+class DeploymentConfig:
+    """
+    Configuration for the Deployment component.
+    """
+
+    root_dir: Path
+    tracking_uri: str
+    registry_uri: str
+    registered_model_name: str

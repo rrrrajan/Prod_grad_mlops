@@ -27,6 +27,10 @@ from src.pipeline.stage_06_model_pusher import (
     ModelPusherTrainingPipeline,
 )
 
+from src.pipeline.stage_07_deployment import (
+    DeploymentPipeline,
+)
+
 # ===========================
 # Stage 01 : Data Ingestion
 # ===========================
@@ -37,7 +41,7 @@ try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
     pipeline = DataIngestionTrainingPipeline()
-    pipeline.main()
+    pipeline.run()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
@@ -56,7 +60,7 @@ try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
     pipeline = DataValidationTrainingPipeline()
-    pipeline.main()
+    pipeline.run()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
@@ -75,7 +79,7 @@ try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
     pipeline = DataTransformationTrainingPipeline()
-    pipeline.main()
+    pipeline.run()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
@@ -94,7 +98,7 @@ try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
     pipeline = ModelTrainerTrainingPipeline()
-    pipeline.main()
+    pipeline.run()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 
@@ -132,7 +136,26 @@ try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
 
     pipeline = ModelPusherTrainingPipeline()
-    pipeline.main()
+    pipeline.run()
+
+    logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
+
+except Exception as e:
+    logger.exception(e)
+    raise CustomException(e, sys)
+
+
+# =========================
+# Stage 07 : Deployment
+# =========================
+
+STAGE_NAME = "Deployment Stage"
+
+try:
+    logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
+
+    pipeline = DeploymentPipeline()
+    pipeline.run()
 
     logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n")
 

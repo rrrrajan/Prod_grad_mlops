@@ -50,6 +50,15 @@ model_evaluation:
 
   confusion_matrix_file_name: artifacts/model_evaluation/confusion_matrix.png
 
+  evaluation_metric: roc_auc
+
+  log_model: true
+  register_model: true
+  registered_model_name: customer_churn_model
+
+  experiment_name: customer-churn-mlops
+  run_name: model_evaluation
+
 model_pusher:
   root_dir: artifacts/model_pusher
 
@@ -71,4 +80,11 @@ mlflow:
 
   tracking_uri: http://localhost:5000
 
+  registry_uri: http://localhost:5000
+
   experiment_name: customer-churn-mlops
+
+deployment:
+  root_dir: artifacts/deployment
+
+  registered_model_name: CustomerChurnModel
