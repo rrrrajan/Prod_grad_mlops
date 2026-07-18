@@ -88,3 +88,5 @@ deployment:
   root_dir: artifacts/deployment
 
   registered_model_name: CustomerChurnModel
+
+  downloaded_model_dir: artifacts/deployment/downloaded_model

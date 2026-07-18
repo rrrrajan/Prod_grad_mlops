@@ -197,6 +197,7 @@ class PredictionConfig:
 @dataclass(frozen=True)
 class MLflowConfig:
     tracking_uri: str
+    registry_uri: str
     experiment_name: str
     enabled: bool
 
@@ -208,6 +209,5 @@ class DeploymentConfig:
     """
 
     root_dir: Path
-    tracking_uri: str
-    registry_uri: str
     registered_model_name: str
+    downloaded_model_dir: Path

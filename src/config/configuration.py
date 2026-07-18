@@ -224,26 +224,30 @@ class ConfigurationManager:
             return model_pusher_config
     
     def get_deployment_config(self) -> DeploymentConfig:
-            """
-            Creates and returns the configuration for the Deployment component.
-            """
+        """
+        Creates and returns the configuration for the Deployment component.
+        """
 
-            deployment_config = self.config["deployment"]
-            mlflow_config = self.config["mlflow"]
+        deployment_config = self.config["deployment"]
 
-            create_directories([deployment_config["root_dir"]])
+        create_directories(
+            [
+                deployment_config["root_dir"],
+                deployment_config["downloaded_model_dir"],
+            ]
+        )
 
-            config = DeploymentConfig(
-                root_dir=Path(deployment_config["root_dir"]),
-                tracking_uri=mlflow_config["tracking_uri"],
-                registry_uri=mlflow_config["registry_uri"],
-                registered_model_name=deployment_config["registered_model_name"],
-            )
+        config = DeploymentConfig(
+            root_dir=Path(deployment_config["root_dir"]),
+            registered_model_name=deployment_config["registered_model_name"],
+            downloaded_model_dir=Path(
+                deployment_config["downloaded_model_dir"]
+            ),
+        )
 
-            logger.info("Deployment configuration initialized.")
+        logger.info("Deployment configuration initialized.")
 
-            return config
-
+        return config
 
     def get_prediction_config(self) -> PredictionConfig:
         """
@@ -275,5 +279,6 @@ class ConfigurationManager:
         return MLflowConfig(
             enabled=config["enabled"],
             tracking_uri=config["tracking_uri"],
+            registry_uri=config["registry_uri"],
             experiment_name=config["experiment_name"],
         )
