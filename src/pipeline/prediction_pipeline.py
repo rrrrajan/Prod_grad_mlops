@@ -1,15 +1,15 @@
 from pathlib import Path
 from typing import Any
 import os
-
 import sys
+
+import mlflow.sklearn
 import pandas as pd
 
 from src.logger import logger
 from src.exception import CustomException
-from src.utils.common import load_object
 
-# Base directory containing all prediction artifacts.
+# Base directory containing the downloaded MLflow model.
 DEFAULT_MODEL_DIR = Path(
     os.getenv(
         "MODEL_DIR",
@@ -17,8 +17,6 @@ DEFAULT_MODEL_DIR = Path(
     )
 )
 
-DEFAULT_MODEL_PATH = DEFAULT_MODEL_DIR / "model.pkl"
-DEFAULT_PREPROCESSOR_PATH = DEFAULT_MODEL_DIR / "preprocessor.pkl"
 
 class CustomData:
     """
@@ -110,78 +108,72 @@ class CustomData:
 
 class PredictionPipeline:
     """
-    Prediction pipeline for customer churn inference.
+    Prediction pipeline for customer churn inference using
+    a registered MLflow sklearn Pipeline.
     """
 
     def __init__(
         self,
-        model_path: Path = DEFAULT_MODEL_PATH,
-        preprocessor_path: Path = DEFAULT_PREPROCESSOR_PATH,
+        model_dir: Path = DEFAULT_MODEL_DIR,
     ) -> None:
         """
-        Initialize prediction pipeline by loading model artifacts.
-
-        Parameters
-        ----------
-        model_path : Path
-            Path to the trained model.
-
-        preprocessor_path : Path
-            Path to the fitted preprocessor.
+        Load the registered MLflow sklearn Pipeline.
         """
 
         try:
-            logger.info("Loading prediction artifacts from '%s'.",
-              DEFAULT_MODEL_DIR,
+            logger.info(
+                "Loading MLflow model from '%s'.",
+                model_dir,
             )
 
-            self.model = load_object(model_path)
-            self.preprocessor = load_object(preprocessor_path)
+            mlmodel_file = model_dir / "MLmodel"
 
-            logger.info("Prediction artifacts loaded successfully.")
+            if not mlmodel_file.exists():
+                raise FileNotFoundError(
+                    f"MLflow model not found. Expected '{mlmodel_file}'."
+                )
+
+            self.model = mlflow.sklearn.load_model(
+                model_uri=str(model_dir)
+            )
+
+            logger.info("MLflow model loaded successfully.")
 
         except Exception as e:
+            logger.exception("Failed to load MLflow model.")
             raise CustomException(e, sys)
 
-    def predict(self, features: pd.DataFrame) -> dict[str, Any]:
+    def predict(
+        self,
+        features: pd.DataFrame,
+    ) -> dict[str, Any]:
         """
         Predict customer churn.
-
-        Parameters
-        ----------
-        features : pd.DataFrame
-            Customer data.
-
-        Returns
-        -------
-        dict[str, Any]
-            Prediction results.
         """
 
         try:
-            logger.info("Applying preprocessing.")
-
-            transformed_features = self.preprocessor.transform(features)
-
             logger.info("Generating prediction.")
 
-            prediction = int(self.model.predict(transformed_features)[0])
+            prediction = int(
+                self.model.predict(features)[0]
+            )
 
             probability = None
 
             if hasattr(self.model, "predict_proba"):
                 probability = float(
-                    self.model.predict_proba(transformed_features)[0][1]
+                    self.model.predict_proba(features)[0][1]
                 )
 
             result = {
                 "prediction": prediction,
-                "label": "Churn" if prediction == 1 else "No Churn",
+                "label": "Churn" if prediction else "No Churn",
                 "probability": probability,
             }
 
             logger.info(
-                "Prediction successful. " "Prediction=%s, Label=%s, Probability=%s",
+                "Prediction successful. "
+                "Prediction=%s, Label=%s, Probability=%s",
                 result["prediction"],
                 result["label"],
                 result["probability"],

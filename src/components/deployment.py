@@ -421,15 +421,19 @@ class Deployment:
                     )
 
             except (
-                URLError,
-                HTTPError,
-                http.client.RemoteDisconnected,
-                ConnectionResetError,
-            ) as ex:
-                logger.info(
-                    "API not ready yet (%s). Retrying...",
-                    ex.__class__.__name__,
-                )
+                    URLError,
+                    HTTPError,
+                    http.client.RemoteDisconnected,
+                    ConnectionResetError,
+                    ConnectionAbortedError,
+                    TimeoutError,
+                    OSError,
+                ) as ex:
+                    logger.info(
+                        "API not ready yet (%s: %s). Retrying...",
+                        ex.__class__.__name__,
+                        ex,
+                    )
 
             time.sleep(1)
 

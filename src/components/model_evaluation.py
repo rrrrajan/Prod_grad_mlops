@@ -457,6 +457,19 @@ class ModelEvaluation:
 
                     inference_pipeline = self.create_inference_pipeline(model)
 
+                    
+                    logger.info(
+                        "Inference pipeline type: %s",
+                        type(inference_pipeline).__name__,
+                    )
+
+                    logger.info(
+                        "Inference pipeline:\n%s",
+                        inference_pipeline,
+                    )
+                                        
+                                  
+                                       
                     self.tracker.log_model(
                         model=inference_pipeline,
                         artifact_path="model",
