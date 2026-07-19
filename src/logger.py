@@ -1,27 +1,53 @@
 import logging
+import os
 from datetime import datetime
 
 from src.constants import ARTIFACTS_DIR
 
-# Create logs directory
-LOGS_DIR = ARTIFACTS_DIR / "logs"
+# =============================================================================
+# Log Directory
+# =============================================================================
 
-# Create a unique folder for each run
 RUN_TIMESTAMP = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-RUN_LOG_DIR = LOGS_DIR / RUN_TIMESTAMP
 
-# Create directories if they don't exist
-RUN_LOG_DIR.mkdir(parents=True, exist_ok=True)
+# Allow overriding the log directory inside containers.
+LOGS_DIR = os.getenv(
+    "LOG_DIR",
+    str(ARTIFACTS_DIR / "logs"),
+)
 
-# Log file
-LOG_FILE_PATH = RUN_LOG_DIR / "running.log"
+RUN_LOG_DIR = os.path.join(LOGS_DIR, RUN_TIMESTAMP)
 
-# Configure logging
+handlers = [
+    logging.StreamHandler(),
+]
+
+# =============================================================================
+# File Logging (if writable)
+# =============================================================================
+
+try:
+    os.makedirs(RUN_LOG_DIR, exist_ok=True)
+
+    LOG_FILE_PATH = os.path.join(
+        RUN_LOG_DIR,
+        "running.log",
+    )
+
+    handlers.append(logging.FileHandler(LOG_FILE_PATH))
+
+except OSError:
+   # File logging unavailable (e.g. read-only filesystem or permissions).
+    pass
+
+# =============================================================================
+# Configure Logging
+# =============================================================================
+
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s] %(levelname)s - %(name)s - %(message)s",
-    handlers=[logging.FileHandler(LOG_FILE_PATH), logging.StreamHandler()],
+    handlers=handlers,
 )
 
-# Project logger
 logger = logging.getLogger("customer_churn_mlops")

@@ -1,25 +1,48 @@
 from src.config.configuration import ConfigurationManager
 from src.components.deployment import Deployment
+from src.logger import logger
+
+STAGE_NAME = "Deployment Stage"
 
 
-def test_download_registered_model():
+class DeploymentPipeline:
+    """
+    Pipeline for the Deployment stage.
+    """
 
-    config = ConfigurationManager()
+    def __init__(self):
+        pass
 
-    deployment = Deployment(
-        deployment_config=config.get_deployment_config(),
-        mlflow_config=config.get_mlflow_config(),
-    )
+    def main(self):
+        config = ConfigurationManager()
 
-    print("Starting deployment test...")
+        deployment_config = config.get_deployment_config()
+        mlflow_config = config.get_mlflow_config()
 
-    deployment.connect_to_mlflow()
-    print("Connected.")
+        deployment = Deployment(
+            deployment_config=deployment_config,
+            mlflow_config=mlflow_config,
+        )
 
-    download_info = deployment.download_registered_model()
+        deployment.deploy()
 
-    print(f"Version      : {download_info['version']}")
-    print(f"Downloaded to: {download_info['path']}")
 
 if __name__ == "__main__":
-    test_download_registered_model()
+
+    logger.info("=" * 70)
+    logger.info(">>>>>> %s started <<<<<<", STAGE_NAME)
+
+    try:
+        DeploymentPipeline().main()
+
+        logger.info(
+            ">>>>>> %s completed <<<<<<",
+            STAGE_NAME,
+        )
+
+    except Exception:
+        logger.exception(
+            ">>>>>> %s failed <<<<<<",
+            STAGE_NAME,
+        )
+        raise

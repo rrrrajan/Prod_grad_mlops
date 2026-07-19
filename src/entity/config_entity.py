@@ -149,6 +149,8 @@ class ModelEvaluationConfig:
     roc_curve_file_name: Path
     confusion_matrix_file_name: Path
 
+    preprocessor_path: Path
+
     target_column: str
 
     evaluation_metric: str
@@ -203,17 +205,6 @@ class MLflowConfig:
 
 
 @dataclass(frozen=True)
-class DeploymentConfig:
-    """
-    Configuration for the Deployment component.
-    """
-
-    root_dir: Path
-    registered_model_name: str
-    downloaded_model_dir: Path
-
-
-@dataclass(frozen=True)
 class DockerBuilderConfig:
     """
     Configuration for the Docker Builder component.
@@ -228,3 +219,49 @@ class DockerBuilderConfig:
     dockerfile_path: Path
 
     context_path: Path
+
+
+
+@dataclass(frozen=True)
+class DeploymentConfig:
+    """
+    Configuration for the Deployment stage.
+
+    Responsibilities:
+        - Retrieve the latest registered model from MLflow.
+        - Deploy the Docker container serving the model.
+    """
+
+    # ==========================================================
+    # Common
+    # ==========================================================
+    root_dir: Path
+
+    # ==========================================================
+    # MLflow
+    # ==========================================================
+    registered_model_name: str
+    downloaded_model_dir: Path
+
+    # ==========================================================
+    # Docker
+    # ==========================================================
+    image_name: str
+    container_name: str
+
+    host_port: int
+    container_port: int
+
+    model_mount_path: str
+    model_env_variable: str
+
+    # ==========================================================
+    # Health Check
+    # ==========================================================
+    health_endpoint: str
+    startup_timeout: int
+
+    # ==========================================================
+    # Deployment Behaviour
+    # ==========================================================
+    remove_existing_container: bool = True

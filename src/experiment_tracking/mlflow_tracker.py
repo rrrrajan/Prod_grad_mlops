@@ -99,9 +99,8 @@ class MLflowTracker(ExperimentTracker):
                     artifact_path,
                 )
 
-    def log_model(self, model: Any, artifact_path: str = "model", registered_model_name: str | None = None,
+    def log_model(self, model: Any, artifact_path: str = "model", registered_model_name: str | None = None, **kwargs,
     ) -> None:
-        ...
         """
         Log the trained model to MLflow.
         """
@@ -117,13 +116,17 @@ class MLflowTracker(ExperimentTracker):
             mlflow.sklearn.log_model(
                 sk_model=model,
                 name=artifact_path,
+                serialization_format="cloudpickle",
                 registered_model_name=registered_model_name,
+                **kwargs,
             )
 
         else:
             mlflow.sklearn.log_model(
                 sk_model=model,
                 name=artifact_path,
+                serialization_format="cloudpickle",
+                **kwargs,
             )
 
     def set_tags(self, tags: dict[str, str]) -> None:

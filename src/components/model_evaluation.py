@@ -5,6 +5,8 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
+from sklearn.pipeline import Pipeline
+from src.utils.common import load_object
 
 from sklearn.metrics import (
     accuracy_score,
@@ -380,6 +382,7 @@ class ModelEvaluation:
         except Exception as e:
             raise CustomException(e, sys)
 
+    
     def log_experiment(self, model, metrics: dict, X_test: np.ndarray) -> None:
         """
         Log evaluation metrics, artifacts, and model using the
@@ -447,12 +450,15 @@ class ModelEvaluation:
                     if self.config.register_model:
                         registered_model_name = self.config.registered_model_name
 
-                        logger.info("Model will be registered as '%s'.",
+                        logger.info(
+                            "Model will be registered as '%s'.",
                             registered_model_name,
                         )
 
+                    inference_pipeline = self.create_inference_pipeline(model)
+
                     self.tracker.log_model(
-                        model=model,
+                        model=inference_pipeline,
                         artifact_path="model",
                         registered_model_name=registered_model_name,
                     )
@@ -461,6 +467,8 @@ class ModelEvaluation:
 
         except Exception as e:
             raise CustomException(e, sys)
+
+
 
     def initiate_model_evaluation(self) -> dict:
         """
@@ -524,3 +532,23 @@ class ModelEvaluation:
         except Exception as e:
             logger.exception("Error occurred during Model Evaluation.")
             raise CustomException(e, sys)
+
+
+    def create_inference_pipeline(self, model):
+        """
+        Create a complete inference pipeline consisting of the
+        fitted preprocessor and the trained classifier.
+        """
+
+        preprocessor = load_object(
+            self.config.preprocessor_path
+        )
+
+        inference_pipeline = Pipeline(
+            steps=[
+                ("preprocessor", preprocessor),
+                ("classifier", model),
+            ]
+        )
+
+        return inference_pipeline

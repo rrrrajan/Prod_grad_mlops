@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any
+import os
 
 import sys
 import pandas as pd
@@ -8,9 +9,16 @@ from src.logger import logger
 from src.exception import CustomException
 from src.utils.common import load_object
 
-DEFAULT_MODEL_PATH = Path("artifacts/model_pusher/model.pkl")
-DEFAULT_PREPROCESSOR_PATH = Path("artifacts/model_pusher/preprocessor.pkl")
+# Base directory containing all prediction artifacts.
+DEFAULT_MODEL_DIR = Path(
+    os.getenv(
+        "MODEL_DIR",
+        "artifacts/model_pusher",
+    )
+)
 
+DEFAULT_MODEL_PATH = DEFAULT_MODEL_DIR / "model.pkl"
+DEFAULT_PREPROCESSOR_PATH = DEFAULT_MODEL_DIR / "preprocessor.pkl"
 
 class CustomData:
     """
@@ -123,7 +131,9 @@ class PredictionPipeline:
         """
 
         try:
-            logger.info("Loading prediction artifacts.")
+            logger.info("Loading prediction artifacts from '%s'.",
+              DEFAULT_MODEL_DIR,
+            )
 
             self.model = load_object(model_path)
             self.preprocessor = load_object(preprocessor_path)
