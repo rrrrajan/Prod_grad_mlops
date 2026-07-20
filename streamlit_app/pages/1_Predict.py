@@ -1,21 +1,7 @@
-import streamlit as st
 import requests
-from config import PREDICT_ENDPOINT
-import os
+import streamlit as st
 
-# -------------------------------------------------------
-# API Configuration
-# -------------------------------------------------------
-
-API_BASE_URL = os.getenv(
-    "API_BASE_URL",
-    "http://127.0.0.1:8000",
-)
-
-API_PREFIX = "/api/v1"
-
-PREDICT_ENDPOINT = f"{API_BASE_URL}{API_PREFIX}/predict"
-
+from config import PREDICT_ENDPOINT, HEALTH_ENDPOINT
 
 # -------------------------------------------------------
 # Page Configuration
@@ -25,9 +11,41 @@ st.set_page_config(
     page_title="Customer Churn Prediction",
     page_icon="📊",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
+# -------------------------------------------------------
+# Sidebar
+# -------------------------------------------------------
+
+st.sidebar.title("Customer Churn MLOps")
+
+try:
+    health_response = requests.get(
+        HEALTH_ENDPOINT,
+        timeout=3,
+    )
+
+    if health_response.status_code == 200:
+        st.sidebar.success("🟢 API Connected")
+    else:
+        st.sidebar.error("🔴 API Unavailable")
+
+except requests.exceptions.RequestException:
+    st.sidebar.error("🔴 API Offline")
+
+st.sidebar.divider()
+
+st.sidebar.caption(
+    "FastAPI • Streamlit • Docker • MLflow"
+)
+
+# -------------------------------------------------------
+# Main Page
+# -------------------------------------------------------
+
 st.title("📊 Customer Churn Prediction")
+
 st.markdown(
     """
 Predict whether a telecom customer is likely to churn based on
@@ -41,7 +59,7 @@ st.divider()
 # Prediction Form
 # -------------------------------------------------------
 
-with st.form("prediction_form"):
+with st.form("prediction_form", clear_on_submit=False):
 
     # =====================================================
     # Customer Information
@@ -52,50 +70,61 @@ with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
     with col1:
+
         gender = st.selectbox(
-            "Gender",
-            ["Male", "Female"],
+            label="Gender",
+            options=["Male", "Female"],
+            help="Customer gender",
         )
 
         senior_citizen = st.selectbox(
-            "Senior Citizen",
-            [0, 1],
+            label="Senior Citizen",
+            options=[0, 1],
             format_func=lambda x: "Yes" if x else "No",
+            help="Whether the customer is a senior citizen",
         )
 
         partner = st.selectbox(
-            "Partner",
-            ["Yes", "No"],
+            label="Partner",
+            options=["Yes", "No"],
         )
 
         dependents = st.selectbox(
-            "Dependents",
-            ["Yes", "No"],
+            label="Dependents",
+            options=["Yes", "No"],
         )
 
     with col2:
+
         tenure = st.number_input(
-            "Tenure (Months)",
+            label="Tenure (Months)",
             min_value=0,
-            max_value=100,
+            max_value=72,
             value=12,
+            step=1,
+            help="Number of months the customer has stayed with the company",
         )
 
         monthly_charges = st.number_input(
-            "Monthly Charges",
+            label="Monthly Charges ($)",
             min_value=0.0,
+            max_value=200.0,
             value=70.0,
             step=1.0,
+            format="%.2f",
         )
 
         total_charges = st.number_input(
-            "Total Charges",
+            label="Total Charges ($)",
             min_value=0.0,
             value=850.0,
             step=10.0,
+            format="%.2f",
         )
 
     st.divider()
+
+    
 
     # =====================================================
     # Phone Services
@@ -106,20 +135,23 @@ with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
     with col1:
+
         phone_service = st.selectbox(
-            "Phone Service",
-            ["Yes", "No"],
+            label="Phone Service",
+            options=["Yes", "No"],
+            help="Whether the customer has a phone service",
         )
 
     with col2:
-        if phone_service == "No":
-            multiple_line_options = ["No phone service"]
-        else:
-            multiple_line_options = ["No", "Yes"]
 
         multiple_lines = st.selectbox(
-            "Multiple Lines",
-            multiple_line_options,
+            label="Multiple Lines",
+            options=(
+                ["No phone service"]
+                if phone_service == "No"
+                else ["No", "Yes"]
+            ),
+            help="Whether the customer has multiple phone lines",
         )
 
     st.divider()
@@ -133,48 +165,55 @@ with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
     with col1:
+
         internet_service = st.selectbox(
-            "Internet Service",
-            ["DSL", "Fiber optic", "No"],
+            label="Internet Service",
+            options=[
+                "DSL",
+                "Fiber optic",
+                "No",
+            ],
+            help="Customer's internet connection type",
         )
 
-        if internet_service == "No":
-            internet_options = ["No internet service"]
-        else:
-            internet_options = ["No", "Yes"]
+        internet_options = (
+            ["No internet service"]
+            if internet_service == "No"
+            else ["No", "Yes"]
+        )
 
         online_security = st.selectbox(
-            "Online Security",
-            internet_options,
+            label="Online Security",
+            options=internet_options,
         )
 
         online_backup = st.selectbox(
-            "Online Backup",
-            internet_options,
+            label="Online Backup",
+            options=internet_options,
         )
 
         device_protection = st.selectbox(
-            "Device Protection",
-            internet_options,
+            label="Device Protection",
+            options=internet_options,
         )
 
     with col2:
+
         tech_support = st.selectbox(
-            "Tech Support",
-            internet_options,
+            label="Tech Support",
+            options=internet_options,
         )
 
         streaming_tv = st.selectbox(
-            "Streaming TV",
-            internet_options,
+            label="Streaming TV",
+            options=internet_options,
         )
 
         streaming_movies = st.selectbox(
-            "Streaming Movies",
-            internet_options,
+            label="Streaming Movies",
+            options=internet_options,
         )
 
-    
     st.divider()
 
     # =====================================================
@@ -186,27 +225,30 @@ with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
     with col1:
+
         contract = st.selectbox(
-            "Contract",
-            [
+            label="Contract",
+            options=[
                 "Month-to-month",
                 "One year",
                 "Two year",
             ],
+            help="Customer contract type",
         )
 
         paperless_billing = st.selectbox(
-            "Paperless Billing",
-            [
+            label="Paperless Billing",
+            options=[
                 "Yes",
                 "No",
             ],
         )
 
     with col2:
+
         payment_method = st.selectbox(
-            "Payment Method",
-            [
+            label="Payment Method",
+            options=[
                 "Electronic check",
                 "Mailed check",
                 "Bank transfer (automatic)",
@@ -214,19 +256,53 @@ with st.form("prediction_form"):
             ],
         )
 
+    st.divider()
 
+    # =====================================================
+    # Form Buttons
+    # =====================================================
 
-    submitted = st.form_submit_button(
-    "🔮 Predict Churn",
-    use_container_width=True,
-    ) 
+    btn1, btn2 = st.columns(2)
 
+    with btn1:
+
+        submitted = st.form_submit_button(
+            label="🔮 Predict Churn",
+            use_container_width=True,
+        )
+
+    with btn2:
+
+        reset = st.form_submit_button(
+            label="🔄 Reset",
+            use_container_width=True,
+        )
 
 # -------------------------------------------------------
-# Form Submission
+# Reset Form
+# -------------------------------------------------------
+
+if reset:
+    st.rerun()
+
+# -------------------------------------------------------
+# Basic Input Validation
 # -------------------------------------------------------
 
 if submitted:
+
+    if monthly_charges < 0:
+        st.error("Monthly Charges cannot be negative.")
+        st.stop()
+
+    if total_charges < 0:
+        st.error("Total Charges cannot be negative.")
+        st.stop()
+
+    if tenure > 0 and total_charges == 0:
+        st.warning(
+            "Total Charges seem unusually low for the given tenure."
+        )
 
     payload = {
         "gender": gender,
@@ -250,9 +326,14 @@ if submitted:
         "TotalCharges": total_charges,
     }
 
+
     try:
 
-        with st.spinner("Generating prediction..."):
+        # -------------------------------------------------------
+        # Call Prediction API
+        # -------------------------------------------------------
+
+        with st.spinner("Running customer churn prediction..."):
 
             response = requests.post(
                 PREDICT_ENDPOINT,
@@ -264,33 +345,69 @@ if submitted:
 
         result = response.json()
 
-        prediction = result["prediction"]
-        probability = float(result["probability"])
-        model_version = result["model_version"]
+        # Store latest prediction
+        st.session_state["last_prediction"] = result
 
-        st.success("Prediction completed successfully!")
+        # -------------------------------------------------------
+        # Parse Response
+        # -------------------------------------------------------
+
+        prediction = (
+            result.get("prediction", "")
+            .strip()
+            .lower()
+        )
+
+        probability = float(
+            result.get("probability", 0.0)
+        )
+
+        probability = max(
+            0.0,
+            min(probability, 1.0),
+        )
+
+        model_version = result.get(
+            "model_version",
+            "N/A",
+        )
+
+        is_churn = prediction == "churn"
 
         prediction_text = (
             "Likely to Churn"
-            if prediction == "Yes"
+            if is_churn
             else "Not Likely to Churn"
         )
 
-        col1, col2, col3 = st.columns(3)
+        # -------------------------------------------------------
+        # Success Message
+        # -------------------------------------------------------
+
+        st.success("Prediction completed successfully!")
+
+        # -------------------------------------------------------
+        # Metrics
+        # -------------------------------------------------------
+
+        col1, col2, col3 = st.columns([2, 2, 1])
 
         with col1:
+
             st.metric(
                 label="Prediction",
                 value=prediction_text,
             )
 
         with col2:
+
             st.metric(
                 label="Churn Probability",
                 value=f"{probability:.2%}",
             )
 
         with col3:
+
             st.metric(
                 label="Model Version",
                 value=model_version,
@@ -298,59 +415,184 @@ if submitted:
 
         st.divider()
 
-        if prediction == "Yes":
-            st.error("🔴 This customer is likely to churn.")
+        # -------------------------------------------------------
+        # Prediction Result
+        # -------------------------------------------------------
+
+        if is_churn:
+
+            st.error(
+                "🔴 This customer is likely to churn."
+            )
+
         else:
-            st.success("🟢 This customer is unlikely to churn.")
+
+            st.success(
+                "🟢 This customer is unlikely to churn."
+            )
+
+        # -------------------------------------------------------
+        # Confidence
+        # -------------------------------------------------------
 
         st.subheader("Prediction Confidence")
+
         st.progress(probability)
-        st.caption(f"Estimated churn probability: {probability:.2%}")
+
+        if probability >= 0.70:
+
+            st.error(
+                f"Confidence: {probability:.2%}"
+            )
+
+        elif probability >= 0.40:
+
+            st.warning(
+                f"Confidence: {probability:.2%}"
+            )
+
+        else:
+
+            st.success(
+                f"Confidence: {probability:.2%}"
+            )
 
         st.divider()
 
+        # -------------------------------------------------------
+        # Prediction Details
+        # -------------------------------------------------------
+
+        with st.expander(
+            "Prediction Details"
+        ):
+
+            st.json(result)
+
+        st.divider()
+
+        # -------------------------------------------------------
+        # Recommendations
+        # -------------------------------------------------------
+
         st.subheader("💡 Recommendations")
 
-        if prediction == "Churn":
+        if is_churn:
+
             st.warning(
                 """
-                Based on the prediction, consider the following retention actions:
+Based on the prediction, consider the following retention actions:
 
-                - 🎁 Offer a loyalty discount or promotional plan.
-                - 📞 Contact the customer proactively.
-                - 📄 Recommend switching to a longer-term contract.
-                - 🛠️ Offer premium technical support or personalized assistance.
-                """
+• 🎁 Offer a loyalty discount.
+
+• 📞 Contact the customer proactively.
+
+• 📄 Recommend a longer-term contract.
+
+• 🛠️ Offer premium technical support.
+
+• 💳 Provide attractive payment options.
+
+• ⭐ Enroll the customer in a loyalty program.
+"""
             )
+
         else:
+
             st.success(
                 """
-                This customer appears likely to remain with the service.
+This customer appears likely to remain with the service.
 
-                Recommended actions:
+Recommended actions:
 
-                - 😊 Continue delivering excellent customer service.
-                - 🎉 Offer loyalty rewards or appreciation benefits.
-                - 📦 Promote premium plans or additional services.
-                - 📧 Keep the customer engaged through regular communication.
-                """
+• 😊 Continue delivering excellent customer service.
+
+• 🎉 Offer loyalty rewards.
+
+• 📦 Recommend premium plans.
+
+• 📧 Keep the customer engaged through regular communication.
+
+• ⭐ Monitor satisfaction regularly.
+"""
             )
 
+
+    # -------------------------------------------------------
+    # Connection Error
+    # -------------------------------------------------------
+
     except requests.exceptions.ConnectionError:
+
         st.error(
-            "Unable to connect to the prediction API.\n\n"
-            "Please ensure the FastAPI server is running."
+            f"""
+Unable to connect to the Prediction API.
+
+Expected endpoint:
+{PREDICT_ENDPOINT}
+
+Please verify that:
+
+• FastAPI server is running
+• Docker container is running
+• API URL in config.py is correct
+"""
         )
+
+    # -------------------------------------------------------
+    # Timeout
+    # -------------------------------------------------------
 
     except requests.exceptions.Timeout:
+
         st.error(
-            "The prediction request timed out."
+            """
+The prediction request timed out.
+
+Please try again in a few seconds.
+"""
         )
 
-    except requests.exceptions.HTTPError as e:
+    # -------------------------------------------------------
+    # HTTP Error
+    # -------------------------------------------------------
+
+    except requests.exceptions.HTTPError:
+
         st.error(
-            f"API Error ({response.status_code}): {response.text}"
+            f"API Error ({response.status_code})"
         )
+
+        try:
+            st.json(response.json())
+        except Exception:
+            st.code(response.text)
+
+    # -------------------------------------------------------
+    # Invalid JSON
+    # -------------------------------------------------------
+
+    except ValueError:
+
+        st.error(
+            "The API returned an invalid response."
+        )
+
+    # -------------------------------------------------------
+    # Unexpected Error
+    # -------------------------------------------------------
 
     except Exception as e:
+
         st.exception(e)
+
+# -------------------------------------------------------
+# Footer
+# -------------------------------------------------------
+
+st.divider()
+
+st.caption(
+    "Customer Churn Prediction System | "
+    "FastAPI • Streamlit • Docker • MLflow"
+)
