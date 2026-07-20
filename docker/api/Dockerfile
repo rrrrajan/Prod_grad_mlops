@@ -65,4 +65,4 @@ EXPOSE 8000
 # Start FastAPI Application using Gunicorn
 # =============================================================================
 
-CMD ["gunicorn", "-c", "docker/api/gunicorn.conf.py", "api:app"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "api:app"]

@@ -13,7 +13,7 @@ from src.exception import CustomException
 DEFAULT_MODEL_DIR = Path(
     os.getenv(
         "MODEL_DIR",
-        "artifacts/model_pusher",
+        "artifacts/deployment/downloaded_model",
     )
 )
 

@@ -89,7 +89,7 @@ bind = "0.0.0.0:8000"
 # In Docker/Kubernetes, containers usually have CPU limits,
 # so using a fixed default (2) is safer and more predictable.
 #
-workers = int(os.getenv("GUNICORN_WORKERS", "2"))
+workers = 1
 
 
 # Worker type.
@@ -289,7 +289,7 @@ max_requests_jitter = 100
 # This optimization is most effective when the application
 # doesn't modify large shared objects after startup.
 #
-preload_app = True
+preload_app = False
 
 
 # =============================================================================

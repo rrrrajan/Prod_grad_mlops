@@ -12,6 +12,13 @@ services:
     env_file:
       - .env
 
+    environment:
+      GUNICORN_WORKERS: 1
+      MODEL_DIR: /app/artifacts/deployment/downloaded_model
+
+    volumes:
+      - ./artifacts/deployment/downloaded_model:/app/artifacts/deployment/downloaded_model
+
     restart: unless-stopped
 
     depends_on:
