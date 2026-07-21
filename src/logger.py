@@ -50,4 +50,9 @@ logging.basicConfig(
     handlers=handlers,
 )
 
+# =============================================================================
+# Project Logger
+# =============================================================================
+
 logger = logging.getLogger("customer_churn_mlops")
+logger.setLevel(logging.INFO)

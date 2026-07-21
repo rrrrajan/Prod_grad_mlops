@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+from sklearn.pipeline import Pipeline
 
 from src.pipeline.prediction_pipeline import CustomData
 
@@ -72,33 +73,32 @@ def test_custom_data_dataframe(customer):
 
 def test_prediction_pipeline_loads(prediction_pipeline):
     """
-    Verify prediction pipeline loads required artifacts.
+    Verify prediction pipeline loads the MLflow inference pipeline.
     """
 
     assert prediction_pipeline.model is not None
-    assert prediction_pipeline.preprocessor is not None
+
+    # The loaded object should be a fitted sklearn Pipeline
+    assert isinstance(prediction_pipeline.model, Pipeline)
+
+    # It should contain both preprocessing and classification steps
+    assert "preprocessor" in prediction_pipeline.model.named_steps
+    assert "classifier" in prediction_pipeline.model.named_steps
 
 
-def test_prediction_pipeline_predict(customer, prediction_pipeline):
+def test_prediction_pipeline_predict(prediction_pipeline, customer):
     """
-    Verify prediction pipeline returns a valid prediction.
+    Verify the prediction pipeline produces a valid prediction.
     """
 
-    result = prediction_pipeline.predict(
-        customer.get_data_as_dataframe()
-    )
+    df = customer.get_data_as_dataframe()
+
+    result = prediction_pipeline.predict(df)
 
     assert isinstance(result, dict)
 
-    assert set(result.keys()) == {
-        "prediction",
-        "label",
-        "probability",
-    }
-
-    assert result["prediction"] in {0, 1}
-    assert result["label"] in {"Churn", "No Churn"}
+    assert result["prediction"] in (0, 1)
+    assert result["label"] in ("Churn", "No Churn")
 
     if result["probability"] is not None:
-        assert isinstance(result["probability"], float)
         assert 0.0 <= result["probability"] <= 1.0

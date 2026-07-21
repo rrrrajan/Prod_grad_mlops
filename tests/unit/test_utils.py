@@ -1,12 +1,13 @@
-import pytest
 from dataclasses import FrozenInstanceError
 from pathlib import Path
 
+import pytest
+
 from src.entity.config_entity import (
     DataIngestionConfig,
-    PredictionConfig,
-    MLflowConfig,
     DeploymentConfig,
+    MLflowConfig,
+    PredictionConfig,
 )
 
 pytestmark = pytest.mark.unit

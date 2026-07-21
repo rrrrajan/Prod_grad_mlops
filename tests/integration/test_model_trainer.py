@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 
 from src.components.model_trainer import ModelTrainer
@@ -28,11 +26,11 @@ def test_model_trainer_pipeline():
 
     assert artifact.trained_model_path.exists()
     assert artifact.metrics_file_path.exists()
-    assert artifact.model_report_file_path.exists()
+    assert artifact.model_report_file_name.exists()
 
     assert artifact.best_model_name is not None
     assert artifact.best_model_name != ""
 
     assert artifact.trained_model_path.is_file()
     assert artifact.metrics_file_path.is_file()
-    assert artifact.model_report_file_path.is_file()
+    assert artifact.model_report_file_name.is_file()

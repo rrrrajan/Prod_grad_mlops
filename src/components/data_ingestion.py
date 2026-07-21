@@ -1,10 +1,10 @@
 import shutil
 import sys
-from pathlib import Path
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from src.entity.artifact_entity import DataIngestionArtifact
 from src.entity.config_entity import DataIngestionConfig
 from src.exception import CustomException
 from src.logger import logger
@@ -19,14 +19,14 @@ class DataIngestion:
     def __init__(self, config: DataIngestionConfig):
         self.config = config
 
-    def initiate_data_ingestion(self) -> tuple[Path, Path]:
+    def initiate_data_ingestion(self) -> DataIngestionArtifact:
         """
         Execute the data ingestion workflow.
 
         Returns
         -------
-        tuple[Path, Path]
-            Paths to the generated train and test datasets.
+        DataIngestionArtifact
+            Artifact containing paths to the generated train and test datasets.
         """
 
         try:
@@ -68,12 +68,8 @@ class DataIngestion:
                 stratify=df[self.config.target_column],
             )
 
-            logger.info("Training dataset shape: %s ", train_df.shape)
-
-            logger.info(
-                "Testing dataset shape: %s",
-                test_df.shape,
-            )
+            logger.info("Training dataset shape: %s", train_df.shape)
+            logger.info("Testing dataset shape: %s", test_df.shape)
 
             # Save train dataset
             train_df.to_csv(
@@ -89,9 +85,9 @@ class DataIngestion:
 
             logger.info("Train and test datasets saved successfully.")
 
-            return (
-                self.config.train_data_path,
-                self.config.test_data_path,
+            return DataIngestionArtifact(
+                train_file_path=self.config.train_data_path,
+                test_file_path=self.config.test_data_path,
             )
 
         except Exception as e:

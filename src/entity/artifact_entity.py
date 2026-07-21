@@ -64,3 +64,13 @@ class ModelTrainerArtifact:
     metrics_file_path: Path
     model_report_file_name: Path
     best_model_name: str
+
+
+@dataclass(frozen=True)
+class ModelPusherArtifact:
+    """
+    Artifact generated after the Model Pusher stage.
+    """
+
+    pushed_model_path: Path
+    pushed_preprocessor_path: Path

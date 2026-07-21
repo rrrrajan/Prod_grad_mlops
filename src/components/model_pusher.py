@@ -1,6 +1,7 @@
 import shutil
 import sys
 
+from src.entity.artifact_entity import ModelPusherArtifact
 from src.entity.config_entity import ModelPusherConfig
 from src.exception import CustomException
 from src.logger import logger
@@ -14,6 +15,12 @@ class ModelPusher:
     This component copies the trained model and fitted preprocessor
     from their source locations into the Model Pusher directory,
     making them ready for downstream inference or deployment.
+
+    Returns
+    -------
+    ModelPusherConfig
+        Configuration containing the pushed artifact paths.
+
     """
 
     def __init__(self, config: ModelPusherConfig) -> None:
@@ -53,15 +60,15 @@ class ModelPusher:
         """
         self.config.root_dir.mkdir(parents=True, exist_ok=True)
 
-    def initiate_model_pusher(self) -> ModelPusherConfig:
+    def initiate_model_pusher(self) -> ModelPusherArtifact:
         """
         Copies the trained model and preprocessor into the
         deployment directory.
 
         Returns
         -------
-        ModelPusherConfig
-            Configuration containing the pushed artifact paths.
+        ModelPusherArtifact
+            Artifact containing the pushed model and preprocessor paths.
 
         Raises
         ------
@@ -99,7 +106,10 @@ class ModelPusher:
 
             logger.info("Model Pusher completed successfully.")
 
-            return self.config
+            return ModelPusherArtifact(
+                pushed_model_path=self.config.pushed_model_path,
+                pushed_preprocessor_path=self.config.pushed_preprocessor_path,
+            )
 
         except Exception as e:
             logger.exception("Error occurred during Model Pusher.")
