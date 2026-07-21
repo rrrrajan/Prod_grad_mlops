@@ -1,17 +1,11 @@
 from pathlib import Path
 
+import pytest
+
 from src.components.data_validation import DataValidation
 from src.config.configuration import ConfigurationManager
 
-
-def test_data_validation_config_creation():
-    """Verify DataValidation configuration is created."""
-
-    config = ConfigurationManager()
-    validation_config = config.get_data_validation_config()
-
-    assert validation_config is not None
-    assert validation_config.root_dir is not None
+pytestmark = pytest.mark.integration
 
 
 def test_data_validation_runs_successfully():

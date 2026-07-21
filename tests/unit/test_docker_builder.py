@@ -1,5 +1,9 @@
+import pytest
+
 from src.components.docker_builder import DockerBuilder
 from src.config.configuration import ConfigurationManager
+
+pytestmark = pytest.mark.unit
 
 
 def test_build_command():
