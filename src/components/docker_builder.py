@@ -63,7 +63,6 @@ class DockerBuilder:
             if result.stdout:
                 logger.info(result.stdout)
 
-            
             logger.info("=" * 80)
             logger.info("Docker image built successfully.")
             logger.info("=" * 80)

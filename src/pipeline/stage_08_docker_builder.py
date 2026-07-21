@@ -24,19 +24,13 @@ class DockerBuilderPipeline:
         try:
             config = ConfigurationManager()
 
-            docker_builder_config = (
-                config.get_docker_builder_config()
-            )
+            docker_builder_config = config.get_docker_builder_config()
 
-            docker_builder = DockerBuilder(
-                docker_builder_config
-            )
+            docker_builder = DockerBuilder(docker_builder_config)
 
             docker_builder.build_image()
 
-            logger.info(
-                "Docker Builder stage completed successfully."
-            )
+            logger.info("Docker Builder stage completed successfully.")
 
         except Exception as e:
             raise CustomException(e, sys)
@@ -51,9 +45,7 @@ if __name__ == "__main__":
 
         obj.main()
 
-        logger.info(
-            f">>>>> stage {STAGE_NAME} completed <<<<<\n\nx==========x"
-        )
+        logger.info(f">>>>> stage {STAGE_NAME} completed <<<<<\n\nx==========x")
 
     except Exception as e:
 

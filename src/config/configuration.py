@@ -2,12 +2,18 @@ import sys
 from pathlib import Path
 
 from src.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH, SCHEMA_FILE_PATH
-from src.entity.config_entity import (DataIngestionConfig,
-                                      DataTransformationConfig,
-                                      DataValidationConfig, DeploymentConfig,
-                                      DockerBuilderConfig, MLflowConfig,
-                                      ModelEvaluationConfig, ModelPusherConfig,
-                                      ModelTrainerConfig, PredictionConfig)
+from src.entity.config_entity import (
+    DataIngestionConfig,
+    DataTransformationConfig,
+    DataValidationConfig,
+    DeploymentConfig,
+    DockerBuilderConfig,
+    MLflowConfig,
+    ModelEvaluationConfig,
+    ModelPusherConfig,
+    ModelTrainerConfig,
+    PredictionConfig,
+)
 from src.exception import CustomException
 from src.logger import logger
 from src.utils.common import create_directories, read_yaml

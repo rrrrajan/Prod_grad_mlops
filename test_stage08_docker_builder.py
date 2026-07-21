@@ -25,10 +25,8 @@ def test_docker_builder_pipeline():
         check=True,
     )
 
-    assert (
-        "customer-churn-api:latest"
-        in result.stdout
-    )
+    assert "customer-churn-api:latest" in result.stdout
+
 
 if __name__ == "__main__":
     test_docker_builder_pipeline()

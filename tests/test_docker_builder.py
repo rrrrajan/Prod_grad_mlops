@@ -13,9 +13,7 @@ def test_build_command():
 
     command = docker_builder._build_command()
 
-    expected_image = (
-        f"{config.image_name}:{config.image_tag}"
-    )
+    expected_image = f"{config.image_name}:{config.image_tag}"
 
     expected_command = [
         "docker",
