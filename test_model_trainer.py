@@ -1,5 +1,5 @@
-from src.config.configuration import ConfigurationManager
 from src.components.model_trainer import ModelTrainer
+from src.config.configuration import ConfigurationManager
 
 
 def main():

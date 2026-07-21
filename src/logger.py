@@ -37,7 +37,7 @@ try:
     handlers.append(logging.FileHandler(LOG_FILE_PATH))
 
 except OSError:
-   # File logging unavailable (e.g. read-only filesystem or permissions).
+    # File logging unavailable (e.g. read-only filesystem or permissions).
     pass
 
 # =============================================================================

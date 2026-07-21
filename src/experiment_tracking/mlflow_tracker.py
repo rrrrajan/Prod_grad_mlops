@@ -99,8 +99,16 @@ class MLflowTracker(ExperimentTracker):
                     artifact_path,
                 )
 
-    def log_model(self, model: Any, artifact_path: str = "model", registered_model_name: str | None = None, **kwargs,
+    def log_model(
+        self,
+        model: Any,
+        artifact_path: str = "model",
+        registered_model_name: str | None = None,
+        **kwargs: Any,
     ) -> None:
+        """
+        Log a model artifact to MLflow.
+        """
         """
         Log the trained model to MLflow.
         """

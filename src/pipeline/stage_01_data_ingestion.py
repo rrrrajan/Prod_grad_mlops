@@ -1,5 +1,5 @@
-from src.config.configuration import ConfigurationManager
 from src.components.data_ingestion import DataIngestion
+from src.config.configuration import ConfigurationManager
 
 STAGE_NAME = "Data Ingestion Stage"
 

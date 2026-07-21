@@ -1,29 +1,28 @@
 import json
-
 import sys
+from datetime import datetime
+
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
-from datetime import datetime
-from sklearn.pipeline import Pipeline
-from src.utils.common import load_object
-
 from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    roc_auc_score,
-    classification_report,
-    confusion_matrix,
     ConfusionMatrixDisplay,
     RocCurveDisplay,
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
 )
+from sklearn.pipeline import Pipeline
 
 from src.entity.config_entity import ModelEvaluationConfig
-from src.experiment_tracking.experiment_tracker import ExperimentTracker
 from src.exception import CustomException
+from src.experiment_tracking.experiment_tracker import ExperimentTracker
 from src.logger import logger
+from src.utils.common import load_object
 
 
 class ModelEvaluation:
@@ -382,7 +381,6 @@ class ModelEvaluation:
         except Exception as e:
             raise CustomException(e, sys)
 
-    
     def log_experiment(self, model, metrics: dict, X_test: np.ndarray) -> None:
         """
         Log evaluation metrics, artifacts, and model using the
@@ -457,7 +455,6 @@ class ModelEvaluation:
 
                     inference_pipeline = self.create_inference_pipeline(model)
 
-                    
                     logger.info(
                         "Inference pipeline type: %s",
                         type(inference_pipeline).__name__,
@@ -467,9 +464,7 @@ class ModelEvaluation:
                         "Inference pipeline:\n%s",
                         inference_pipeline,
                     )
-                                        
-                                  
-                                       
+
                     self.tracker.log_model(
                         model=inference_pipeline,
                         artifact_path="model",
@@ -480,8 +475,6 @@ class ModelEvaluation:
 
         except Exception as e:
             raise CustomException(e, sys)
-
-
 
     def initiate_model_evaluation(self) -> dict:
         """
@@ -546,16 +539,13 @@ class ModelEvaluation:
             logger.exception("Error occurred during Model Evaluation.")
             raise CustomException(e, sys)
 
-
     def create_inference_pipeline(self, model):
         """
         Create a complete inference pipeline consisting of the
         fitted preprocessor and the trained classifier.
         """
 
-        preprocessor = load_object(
-            self.config.preprocessor_path
-        )
+        preprocessor = load_object(self.config.preprocessor_path)
 
         inference_pipeline = Pipeline(
             steps=[

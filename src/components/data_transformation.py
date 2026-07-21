@@ -1,17 +1,15 @@
-import pandas as pd
-import numpy as np
+import sys
 from pathlib import Path
 
-from src.exception import CustomException
-import sys
-
+import numpy as np
+import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from src.entity.config_entity import DataTransformationConfig
+from src.exception import CustomException
 from src.logger import logger
 from src.utils.common import save_object
 

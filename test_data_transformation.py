@@ -1,5 +1,5 @@
-from src.config.configuration import ConfigurationManager
 from src.components.data_transformation import DataTransformation
+from src.config.configuration import ConfigurationManager
 
 config = ConfigurationManager()
 

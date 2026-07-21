@@ -44,19 +44,13 @@ def predict(customer_data: dict[str, Any]) -> dict[str, Any]:
         return response.json()
 
     except requests.exceptions.Timeout as exc:
-        raise PredictionAPIError(
-            "The request timed out."
-        ) from exc
+        raise PredictionAPIError("The request timed out.") from exc
 
     except requests.exceptions.ConnectionError as exc:
-        raise PredictionAPIError(
-            "Unable to connect to the FastAPI server."
-        ) from exc
+        raise PredictionAPIError("Unable to connect to the FastAPI server.") from exc
 
     except requests.exceptions.HTTPError as exc:
-        raise PredictionAPIError(
-            response.text
-        ) from exc
+        raise PredictionAPIError(response.text) from exc
 
     except requests.exceptions.RequestException as exc:
         raise PredictionAPIError(str(exc)) from exc

@@ -1,7 +1,8 @@
-from src.pipeline.stage_05_model_evaluation import ModelEvaluationPipeline
+import sys
+
 from src.exception import CustomException
 from src.logger import logger
-import sys
+from src.pipeline.stage_05_model_evaluation import ModelEvaluationPipeline
 
 STAGE_NAME = "Model Evaluation Stage"
 

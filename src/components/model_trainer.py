@@ -1,37 +1,31 @@
+import sys
+from pathlib import Path
+from typing import Any
+
 import joblib
 import numpy as np
-import sys
-
-from src.utils.common import save_json
-from src.exception import CustomException
-from src.logger import logger
-
-from pathlib import Path
-from typing import Dict, Any
-
 from sklearn.base import ClassifierMixin
-
-from sklearn.linear_model import LogisticRegression
-
-from sklearn.tree import DecisionTreeClassifier
-
 from sklearn.ensemble import (
-    RandomForestClassifier,
-    GradientBoostingClassifier,
     AdaBoostClassifier,
     ExtraTreesClassifier,
+    GradientBoostingClassifier,
+    RandomForestClassifier,
 )
-
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
+    f1_score,
     precision_score,
     recall_score,
-    f1_score,
     roc_auc_score,
 )
+from sklearn.tree import DecisionTreeClassifier
 
-from src.entity.config_entity import ModelTrainerConfig
 from src.entity.artifact_entity import ModelTrainerArtifact
+from src.entity.config_entity import ModelTrainerConfig
+from src.exception import CustomException
+from src.logger import logger
+from src.utils.common import save_json
 
 
 class ModelTrainer:
@@ -75,7 +69,11 @@ class ModelTrainer:
             y_test = test_array[:, -1]
 
             logger.info(
-                "Training data loaded successfully. X_train shape: %s, y_train shape: %s",
+                (
+                    "Training data loaded successfully."
+                    " X_train shape: %s, "
+                    " y_train shape: %s "
+                ),
                 X_train.shape,
                 y_train.shape,
             )
@@ -92,7 +90,7 @@ class ModelTrainer:
             logger.exception("Failed to load transformed datasets.")
             raise CustomException(e, sys)
 
-    def get_models(self) -> Dict[str, ClassifierMixin]:
+    def get_models(self) -> dict[str, ClassifierMixin]:
         """
         Create and return all enabled machine learning models.
 
@@ -154,8 +152,8 @@ class ModelTrainer:
         X_test: np.ndarray,
         y_train: np.ndarray,
         y_test: np.ndarray,
-        models: Dict[str, ClassifierMixin],
-    ) -> Dict[str, Dict[str, Any]]:
+        models: dict[str, ClassifierMixin],
+    ) -> dict[str, dict[str, Any]]:
         """
         Train and evaluate all configured machine learning models.
 
@@ -187,7 +185,7 @@ class ModelTrainer:
 
             logger.info("Starting model training and evaluation.")
 
-            results: Dict[str, Dict[str, Any]] = {}
+            results: dict[str, dict[str, Any]] = {}
 
             for model_name, model in models.items():
 
@@ -270,8 +268,8 @@ class ModelTrainer:
             raise CustomException(e, sys)
 
     def select_best_model(
-        self, results: Dict[str, Dict[str, Any]]
-    ) -> tuple[str, ClassifierMixin, Dict[str, Any]]:
+        self, results: dict[str, dict[str, Any]]
+    ) -> tuple[str, ClassifierMixin, dict[str, Any]]:
         """
         Select the best-performing model based on the configured metric.
 

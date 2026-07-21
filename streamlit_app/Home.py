@@ -1,6 +1,6 @@
 import streamlit as st
 
-from config import APP_TITLE, APP_ICON
+from config import APP_ICON, APP_TITLE
 
 st.set_page_config(
     page_title=APP_TITLE,
@@ -12,8 +12,7 @@ st.title("📈 Customer Churn Prediction")
 
 st.markdown("---")
 
-st.write(
-    """
+st.write("""
     Welcome to the Customer Churn Prediction application.
 
     This application is built using:
@@ -25,5 +24,4 @@ st.write(
     - Production MLOps Pipeline
 
     Use the navigation menu on the left to make predictions.
-    """
-)
+    """)

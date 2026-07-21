@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 
-from config import PREDICT_ENDPOINT, HEALTH_ENDPOINT
+from config import HEALTH_ENDPOINT, PREDICT_ENDPOINT
 
 # -------------------------------------------------------
 # Page Configuration
@@ -36,9 +36,7 @@ except requests.exceptions.RequestException:
 
 st.sidebar.divider()
 
-st.sidebar.caption(
-    "FastAPI • Streamlit • Docker • MLflow"
-)
+st.sidebar.caption("FastAPI • Streamlit • Docker • MLflow")
 
 # -------------------------------------------------------
 # Main Page
@@ -46,12 +44,10 @@ st.sidebar.caption(
 
 st.title("📊 Customer Churn Prediction")
 
-st.markdown(
-    """
+st.markdown("""
 Predict whether a telecom customer is likely to churn based on
 their demographic information and subscribed services.
-"""
-)
+""")
 
 st.divider()
 
@@ -124,8 +120,6 @@ with st.form("prediction_form", clear_on_submit=False):
 
     st.divider()
 
-    
-
     # =====================================================
     # Phone Services
     # =====================================================
@@ -146,11 +140,7 @@ with st.form("prediction_form", clear_on_submit=False):
 
         multiple_lines = st.selectbox(
             label="Multiple Lines",
-            options=(
-                ["No phone service"]
-                if phone_service == "No"
-                else ["No", "Yes"]
-            ),
+            options=(["No phone service"] if phone_service == "No" else ["No", "Yes"]),
             help="Whether the customer has multiple phone lines",
         )
 
@@ -177,9 +167,7 @@ with st.form("prediction_form", clear_on_submit=False):
         )
 
         internet_options = (
-            ["No internet service"]
-            if internet_service == "No"
-            else ["No", "Yes"]
+            ["No internet service"] if internet_service == "No" else ["No", "Yes"]
         )
 
         online_security = st.selectbox(
@@ -300,9 +288,7 @@ if submitted:
         st.stop()
 
     if tenure > 0 and total_charges == 0:
-        st.warning(
-            "Total Charges seem unusually low for the given tenure."
-        )
+        st.warning("Total Charges seem unusually low for the given tenure.")
 
     payload = {
         "gender": gender,
@@ -325,7 +311,6 @@ if submitted:
         "MonthlyCharges": monthly_charges,
         "TotalCharges": total_charges,
     }
-
 
     try:
 
@@ -352,15 +337,9 @@ if submitted:
         # Parse Response
         # -------------------------------------------------------
 
-        prediction = (
-            result.get("prediction", "")
-            .strip()
-            .lower()
-        )
+        prediction = result.get("prediction", "").strip().lower()
 
-        probability = float(
-            result.get("probability", 0.0)
-        )
+        probability = float(result.get("probability", 0.0))
 
         probability = max(
             0.0,
@@ -374,11 +353,7 @@ if submitted:
 
         is_churn = prediction == "churn"
 
-        prediction_text = (
-            "Likely to Churn"
-            if is_churn
-            else "Not Likely to Churn"
-        )
+        prediction_text = "Likely to Churn" if is_churn else "Not Likely to Churn"
 
         # -------------------------------------------------------
         # Success Message
@@ -421,15 +396,11 @@ if submitted:
 
         if is_churn:
 
-            st.error(
-                "🔴 This customer is likely to churn."
-            )
+            st.error("🔴 This customer is likely to churn.")
 
         else:
 
-            st.success(
-                "🟢 This customer is unlikely to churn."
-            )
+            st.success("🟢 This customer is unlikely to churn.")
 
         # -------------------------------------------------------
         # Confidence
@@ -441,21 +412,15 @@ if submitted:
 
         if probability >= 0.70:
 
-            st.error(
-                f"Confidence: {probability:.2%}"
-            )
+            st.error(f"Confidence: {probability:.2%}")
 
         elif probability >= 0.40:
 
-            st.warning(
-                f"Confidence: {probability:.2%}"
-            )
+            st.warning(f"Confidence: {probability:.2%}")
 
         else:
 
-            st.success(
-                f"Confidence: {probability:.2%}"
-            )
+            st.success(f"Confidence: {probability:.2%}")
 
         st.divider()
 
@@ -463,9 +428,7 @@ if submitted:
         # Prediction Details
         # -------------------------------------------------------
 
-        with st.expander(
-            "Prediction Details"
-        ):
+        with st.expander("Prediction Details"):
 
             st.json(result)
 
@@ -479,8 +442,7 @@ if submitted:
 
         if is_churn:
 
-            st.warning(
-                """
+            st.warning("""
 Based on the prediction, consider the following retention actions:
 
 • 🎁 Offer a loyalty discount.
@@ -494,13 +456,11 @@ Based on the prediction, consider the following retention actions:
 • 💳 Provide attractive payment options.
 
 • ⭐ Enroll the customer in a loyalty program.
-"""
-            )
+""")
 
         else:
 
-            st.success(
-                """
+            st.success("""
 This customer appears likely to remain with the service.
 
 Recommended actions:
@@ -514,9 +474,7 @@ Recommended actions:
 • 📧 Keep the customer engaged through regular communication.
 
 • ⭐ Monitor satisfaction regularly.
-"""
-            )
-
+""")
 
     # -------------------------------------------------------
     # Connection Error
@@ -524,8 +482,7 @@ Recommended actions:
 
     except requests.exceptions.ConnectionError:
 
-        st.error(
-            f"""
+        st.error(f"""
 Unable to connect to the Prediction API.
 
 Expected endpoint:
@@ -536,8 +493,7 @@ Please verify that:
 • FastAPI server is running
 • Docker container is running
 • API URL in config.py is correct
-"""
-        )
+""")
 
     # -------------------------------------------------------
     # Timeout
@@ -545,13 +501,11 @@ Please verify that:
 
     except requests.exceptions.Timeout:
 
-        st.error(
-            """
+        st.error("""
 The prediction request timed out.
 
 Please try again in a few seconds.
-"""
-        )
+""")
 
     # -------------------------------------------------------
     # HTTP Error
@@ -559,9 +513,7 @@ Please try again in a few seconds.
 
     except requests.exceptions.HTTPError:
 
-        st.error(
-            f"API Error ({response.status_code})"
-        )
+        st.error(f"API Error ({response.status_code})")
 
         try:
             st.json(response.json())
@@ -574,9 +526,7 @@ Please try again in a few seconds.
 
     except ValueError:
 
-        st.error(
-            "The API returned an invalid response."
-        )
+        st.error("The API returned an invalid response.")
 
     # -------------------------------------------------------
     # Unexpected Error
@@ -593,6 +543,5 @@ Please try again in a few seconds.
 st.divider()
 
 st.caption(
-    "Customer Churn Prediction System | "
-    "FastAPI • Streamlit • Docker • MLflow"
+    "Customer Churn Prediction System | " "FastAPI • Streamlit • Docker • MLflow"
 )

@@ -1,14 +1,11 @@
-import sys
+import http.client
 import shutil
 import subprocess
-from pathlib import Path
-
+import sys
 import time
-
-import http.client
-
+from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
-from urllib.error import URLError, HTTPError
 
 import mlflow
 from mlflow.tracking import MlflowClient
@@ -120,7 +117,6 @@ class Deployment:
         except Exception as e:
             logger.exception("Failed while verifying Docker.")
             raise CustomException(e, sys)
-        
 
     def verify_image(self) -> None:
         """
@@ -167,7 +163,6 @@ class Deployment:
         except Exception as e:
             logger.exception("Failed while verifying Docker image.")
             raise CustomException(e, sys)
-
 
     def stop_existing_container(self) -> None:
         """
@@ -240,8 +235,6 @@ class Deployment:
             logger.exception("Error while stopping Docker container.")
             raise CustomException(e, sys)
 
-
-   
     def remove_existing_container(self) -> None:
         """
         Remove the existing Docker container if it exists.
@@ -251,9 +244,7 @@ class Deployment:
         """
         try:
             if not self.config.remove_existing_container:
-                logger.info(
-                    "Container removal is disabled. Skipping removal step."
-                )
+                logger.info("Container removal is disabled. Skipping removal step.")
                 return
 
             logger.info(
@@ -316,11 +307,8 @@ class Deployment:
             )
 
         except Exception as e:
-            logger.exception(
-                "Error while removing Docker container."
-            )
+            logger.exception("Error while removing Docker container.")
             raise CustomException(e, sys)
-        
 
     def run_container(self) -> None:
         """
@@ -355,7 +343,7 @@ class Deployment:
                 "LOG_DIR=/tmp/customer-churn-logs",
                 self.config.image_name,
             ]
-            
+
             logger.info(
                 "Running command: %s",
                 " ".join(command),
@@ -374,9 +362,7 @@ class Deployment:
             )
 
         except subprocess.CalledProcessError as e:
-            logger.exception(
-                "Failed to start Docker container."
-            )
+            logger.exception("Failed to start Docker container.")
 
             raise CustomException(
                 e.stderr or "Unable to start Docker container.",
@@ -384,20 +370,16 @@ class Deployment:
             )
 
         except Exception as e:
-            logger.exception(
-                "Error while starting Docker container."
-            )
+            logger.exception("Error while starting Docker container.")
 
             raise CustomException(e, sys)
-        
 
     def wait_until_ready(self) -> None:
         """
         Wait until the deployed API becomes responsive.
         """
         url = (
-            f"http://localhost:{self.config.host_port}"
-            f"{self.config.health_endpoint}"
+            f"http://localhost:{self.config.host_port}" f"{self.config.health_endpoint}"
         )
 
         logger.info("Waiting for API to become ready: %s", url)
@@ -421,19 +403,19 @@ class Deployment:
                     )
 
             except (
-                    URLError,
-                    HTTPError,
-                    http.client.RemoteDisconnected,
-                    ConnectionResetError,
-                    ConnectionAbortedError,
-                    TimeoutError,
-                    OSError,
-                ) as ex:
-                    logger.info(
-                        "API not ready yet (%s: %s). Retrying...",
-                        ex.__class__.__name__,
-                        ex,
-                    )
+                URLError,
+                HTTPError,
+                http.client.RemoteDisconnected,
+                ConnectionResetError,
+                ConnectionAbortedError,
+                TimeoutError,
+                OSError,
+            ) as ex:
+                logger.info(
+                    "API not ready yet (%s: %s). Retrying...",
+                    ex.__class__.__name__,
+                    ex,
+                )
 
             time.sleep(1)
 
@@ -444,7 +426,6 @@ class Deployment:
             ),
             sys,
         )
-
 
     def health_check(self) -> None:
         """
@@ -463,22 +444,13 @@ class Deployment:
 
             with urlopen(url, timeout=5) as response:
                 if response.status != 200:
-                    raise RuntimeError(
-                        "Health check failed."
-                    )
+                    raise RuntimeError("Health check failed.")
 
-            logger.info(
-                "Deployment health check passed."
-            )
+            logger.info("Deployment health check passed.")
 
         except Exception as e:
-            logger.exception(
-                "Deployment health check failed."
-            )
+            logger.exception("Deployment health check failed.")
             raise CustomException(e, sys)
-                    
-
-        
 
     def deploy(self) -> None:
         """
@@ -524,8 +496,7 @@ class Deployment:
 
         if not versions:
             raise ValueError(
-                f"No versions found for model "
-                f"{self.config.registered_model_name}"
+                f"No versions found for model " f"{self.config.registered_model_name}"
             )
 
         latest = max(
@@ -559,9 +530,7 @@ class Deployment:
                 latest.version,
             )
 
-            model_uri = (
-                f"models:/{self.config.registered_model_name}/{latest.version}"
-            )
+            model_uri = f"models:/{self.config.registered_model_name}/{latest.version}"
 
             download_dir = self.config.downloaded_model_dir
 

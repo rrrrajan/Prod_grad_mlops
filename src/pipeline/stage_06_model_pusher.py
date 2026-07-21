@@ -1,9 +1,9 @@
-from src.logger import logger
-from src.exception import CustomException
-
-from src.config.configuration import ConfigurationManager
-from src.components.model_pusher import ModelPusher
 import sys
+
+from src.components.model_pusher import ModelPusher
+from src.config.configuration import ConfigurationManager
+from src.exception import CustomException
+from src.logger import logger
 
 
 class ModelPusherTrainingPipeline:

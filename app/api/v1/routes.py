@@ -1,15 +1,10 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 
-from fastapi import HTTPException
-
+from app.core.config import settings
 from src.logger import logger
-from src.pipeline.prediction_pipeline import (
-    CustomData,
-    PredictionPipeline,
-)
+from src.pipeline.prediction_pipeline import CustomData, PredictionPipeline
 from src.schema.request import CustomerRequest
 from src.schema.response import PredictionResponse
-from app.core.config import settings
 
 
 def get_prediction_pipeline(request: Request) -> PredictionPipeline:

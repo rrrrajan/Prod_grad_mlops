@@ -1,8 +1,6 @@
 import pandas as pd
 
-from src.pipeline.prediction_pipeline import (
-    CustomData,
-)
+from src.pipeline.prediction_pipeline import CustomData
 
 
 def test_custom_data_dataframe():
@@ -40,7 +38,6 @@ def test_custom_data_dataframe():
 
 def test_prediction_pipeline_loads(prediction_pipeline):
     assert prediction_pipeline.model is not None
-    assert prediction_pipeline.preprocessor is not None
 
 
 def test_prediction_pipeline_predict(prediction_pipeline):

@@ -25,6 +25,4 @@ class InferencePipeline:
     def predict(self, data):
         logger.info("Inference request received.")
 
-        raise NotImplementedError(
-            "Inference Pipeline will be connected to PredictionPipeline in the next step."
-        )
+        raise NotImplementedError("Inference Pipeline is not implemented yet.")

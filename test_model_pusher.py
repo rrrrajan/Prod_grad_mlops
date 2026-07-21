@@ -1,11 +1,8 @@
 import sys
 
-from src.logger import logger
 from src.exception import CustomException
-
-from src.pipeline.stage_06_model_pusher import (
-    ModelPusherTrainingPipeline,
-)
+from src.logger import logger
+from src.pipeline.stage_06_model_pusher import ModelPusherTrainingPipeline
 
 if __name__ == "__main__":
     try:

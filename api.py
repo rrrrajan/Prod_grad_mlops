@@ -1,21 +1,14 @@
-from fastapi.middleware.cors import CORSMiddleware
-
 from contextlib import asynccontextmanager
 
-from app.middleware.exception_handler import register_exception_handlers
-
-from app.middleware.logging_middleware import LoggingMiddleware
-
-from app.core.config import settings
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.routes import router
-
-from fastapi import FastAPI, Request
-
+from app.core.config import settings
+from app.middleware.exception_handler import register_exception_handlers
+from app.middleware.logging_middleware import LoggingMiddleware
 from src.logger import logger
-from src.pipeline.prediction_pipeline import (
-    PredictionPipeline,
-)
+from src.pipeline.prediction_pipeline import PredictionPipeline
 
 
 def get_prediction_pipeline(request: Request) -> PredictionPipeline:

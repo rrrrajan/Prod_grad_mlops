@@ -1,9 +1,8 @@
-from pathlib import Path
 import shutil
 import sys
+from pathlib import Path
 
 import pandas as pd
-
 from sklearn.model_selection import train_test_split
 
 from src.entity.config_entity import DataIngestionConfig

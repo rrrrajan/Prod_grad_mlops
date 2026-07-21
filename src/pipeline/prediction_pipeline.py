@@ -1,13 +1,13 @@
-from pathlib import Path
-from typing import Any
 import os
 import sys
+from pathlib import Path
+from typing import Any
 
 import mlflow.sklearn
 import pandas as pd
 
-from src.logger import logger
 from src.exception import CustomException
+from src.logger import logger
 
 # Base directory containing the downloaded MLflow model.
 DEFAULT_MODEL_DIR = Path(
@@ -133,9 +133,7 @@ class PredictionPipeline:
                     f"MLflow model not found. Expected '{mlmodel_file}'."
                 )
 
-            self.model = mlflow.sklearn.load_model(
-                model_uri=str(model_dir)
-            )
+            self.model = mlflow.sklearn.load_model(model_uri=str(model_dir))
 
             logger.info("MLflow model loaded successfully.")
 
@@ -154,16 +152,12 @@ class PredictionPipeline:
         try:
             logger.info("Generating prediction.")
 
-            prediction = int(
-                self.model.predict(features)[0]
-            )
+            prediction = int(self.model.predict(features)[0])
 
             probability = None
 
             if hasattr(self.model, "predict_proba"):
-                probability = float(
-                    self.model.predict_proba(features)[0][1]
-                )
+                probability = float(self.model.predict_proba(features)[0][1])
 
             result = {
                 "prediction": prediction,
@@ -172,8 +166,7 @@ class PredictionPipeline:
             }
 
             logger.info(
-                "Prediction successful. "
-                "Prediction=%s, Label=%s, Probability=%s",
+                "Prediction successful. " "Prediction=%s, Label=%s, Probability=%s",
                 result["prediction"],
                 result["label"],
                 result["probability"],

@@ -1,8 +1,6 @@
 import subprocess
 
-from src.pipeline.stage_08_docker_builder import (
-    DockerBuilderPipeline,
-)
+from src.pipeline.stage_08_docker_builder import DockerBuilderPipeline
 
 
 def test_docker_builder_pipeline():

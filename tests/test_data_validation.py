@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from src.config.configuration import ConfigurationManager
 from src.components.data_validation import DataValidation
+from src.config.configuration import ConfigurationManager
 
 
 def test_data_validation_config_creation():

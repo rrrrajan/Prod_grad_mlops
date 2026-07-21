@@ -1,10 +1,9 @@
 import sys
 
-from src.config.configuration import ConfigurationManager
 from src.components.deployment import Deployment
+from src.config.configuration import ConfigurationManager
 from src.exception import CustomException
 from src.logger import logger
-
 
 STAGE_NAME = "Deployment Stage"
 

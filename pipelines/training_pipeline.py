@@ -13,12 +13,12 @@ Current stages:
 """
 
 from src.logger import logger
-
 from src.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 from src.pipeline.stage_02_data_validation import DataValidationTrainingPipeline
 from src.pipeline.stage_03_data_transformation import DataTransformationTrainingPipeline
 from src.pipeline.stage_04_model_trainer import ModelTrainerTrainingPipeline
 from src.pipeline.stage_05_model_evaluation import ModelEvaluationPipeline
+
 
 class TrainingPipeline:
     """
@@ -29,7 +29,7 @@ class TrainingPipeline:
         logger.info("Initializing Training Pipeline...")
 
     def run(self) -> None:
-        
+
         logger.info("=" * 80)
         logger.info("TRAINING PIPELINE STARTED")
         logger.info("=" * 80)
@@ -48,6 +48,6 @@ class TrainingPipeline:
         logger.info("TRAINING PIPELINE COMPLETED")
         logger.info("=" * 80)
 
-  
+
 if __name__ == "__main__":
     TrainingPipeline().run()

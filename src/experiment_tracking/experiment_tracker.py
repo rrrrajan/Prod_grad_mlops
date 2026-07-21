@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from contextlib import AbstractContextManager
 from typing import Any
-from collections.abc import Iterable
 
 
 class ExperimentTracker(ABC):
@@ -62,8 +62,16 @@ class ExperimentTracker(ABC):
         ...
 
     @abstractmethod
-    def log_model(self, model: Any, artifact_path: str = "model", registered_model_name: str | None = None,
+    def log_model(
+        self,
+        model: Any,
+        artifact_path: str = "model",
+        registered_model_name: str | None = None,
+        **kwargs: Any,
     ) -> None:
+        """
+        Log a model artifact.
+        """
         """
         Log the trained model.
 

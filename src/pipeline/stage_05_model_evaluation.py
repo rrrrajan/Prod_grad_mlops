@@ -1,10 +1,11 @@
-from src.config.configuration import ConfigurationManager
-from src.components.model_evaluation import ModelEvaluation
-from src.exception import CustomException
-from src.logger import logger
 import sys
-from src.experiment_tracking.mlflow_tracker import MLflowTracker
+
+from src.components.model_evaluation import ModelEvaluation
+from src.config.configuration import ConfigurationManager
+from src.exception import CustomException
 from src.experiment_tracking.experiment_tracker import ExperimentTracker
+from src.experiment_tracking.mlflow_tracker import MLflowTracker
+from src.logger import logger
 
 
 class ModelEvaluationPipeline:

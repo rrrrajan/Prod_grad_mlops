@@ -1,29 +1,22 @@
-from pathlib import Path
-from src.exception import CustomException
 import sys
-from src.logger import logger
+from pathlib import Path
 
-
-from src.constants import (
-    CONFIG_FILE_PATH,
-    PARAMS_FILE_PATH,
-    SCHEMA_FILE_PATH,
-)
-
+from src.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH, SCHEMA_FILE_PATH
 from src.entity.config_entity import (
     DataIngestionConfig,
-    DataValidationConfig,
     DataTransformationConfig,
-    ModelTrainerConfig,
-    ModelEvaluationConfig,
-    ModelPusherConfig,
-    PredictionConfig,
-    MLflowConfig,
+    DataValidationConfig,
     DeploymentConfig,
     DockerBuilderConfig,
+    MLflowConfig,
+    ModelEvaluationConfig,
+    ModelPusherConfig,
+    ModelTrainerConfig,
+    PredictionConfig,
 )
-
-from src.utils.common import read_yaml, create_directories
+from src.exception import CustomException
+from src.logger import logger
+from src.utils.common import create_directories, read_yaml
 
 
 class ConfigurationManager:
@@ -200,33 +193,31 @@ class ConfigurationManager:
         return model_evaluation_config
 
     def get_model_pusher_config(self) -> ModelPusherConfig:
-            """
-            Creates and returns the configuration object for the
-            Model Pusher stage.
+        """
+        Creates and returns the configuration object for the
+        Model Pusher stage.
 
-            Returns
-            -------
-            ModelPusherConfig
-                Configuration containing all paths required
-                for the Model Pusher component.
-            """
+        Returns
+        -------
+        ModelPusherConfig
+            Configuration containing all paths required
+            for the Model Pusher component.
+        """
 
-            config = self.config["model_pusher"]
+        config = self.config["model_pusher"]
 
-            create_directories([config["root_dir"]])
+        create_directories([config["root_dir"]])
 
-            model_pusher_config = ModelPusherConfig(
-                root_dir=Path(config["root_dir"]),
-                source_model_path=Path(config["source_model_path"]),
-                source_preprocessor_path=Path(config["source_preprocessor_path"]),
-                pushed_model_path=Path(config["pushed_model_path"]),
-                pushed_preprocessor_path=Path(config["pushed_preprocessor_path"]),
-            )
+        model_pusher_config = ModelPusherConfig(
+            root_dir=Path(config["root_dir"]),
+            source_model_path=Path(config["source_model_path"]),
+            source_preprocessor_path=Path(config["source_preprocessor_path"]),
+            pushed_model_path=Path(config["pushed_model_path"]),
+            pushed_preprocessor_path=Path(config["pushed_preprocessor_path"]),
+        )
 
-            return model_pusher_config
-    
-    
-    
+        return model_pusher_config
+
     def get_prediction_config(self) -> PredictionConfig:
         """
         Creates and returns the PredictionConfig required for inference.
@@ -261,7 +252,6 @@ class ConfigurationManager:
             experiment_name=config["experiment_name"],
         )
 
-
     def get_docker_builder_config(self) -> DockerBuilderConfig:
         """
         Creates and returns the configuration object for the
@@ -289,7 +279,6 @@ class ConfigurationManager:
         logger.info("Docker Builder configuration initialized.")
 
         return docker_builder_config
-    
 
     def get_deployment_config(self) -> DeploymentConfig:
         """
@@ -310,15 +299,11 @@ class ConfigurationManager:
             # Common
             # ======================================================
             root_dir=Path(deployment_config["root_dir"]),
-
             # ======================================================
             # MLflow
             # ======================================================
             registered_model_name=deployment_config["registered_model_name"],
-            downloaded_model_dir=Path(
-                deployment_config["downloaded_model_dir"]
-            ),
-
+            downloaded_model_dir=Path(deployment_config["downloaded_model_dir"]),
             # ======================================================
             # Docker
             # ======================================================
@@ -328,19 +313,15 @@ class ConfigurationManager:
             container_port=deployment_config["container_port"],
             model_mount_path=deployment_config["model_mount_path"],
             model_env_variable=deployment_config["model_env_variable"],
-
             # ======================================================
             # Health Check
             # ======================================================
             health_endpoint=deployment_config["health_endpoint"],
             startup_timeout=deployment_config["startup_timeout"],
-
             # ======================================================
             # Deployment Behaviour
             # ======================================================
-            remove_existing_container=deployment_config[
-                "remove_existing_container"
-            ],
+            remove_existing_container=deployment_config["remove_existing_container"],
         )
 
         logger.info("Deployment configuration initialized.")

@@ -221,7 +221,6 @@ class DockerBuilderConfig:
     context_path: Path
 
 
-
 @dataclass(frozen=True)
 class DeploymentConfig:
     """

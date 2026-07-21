@@ -3,10 +3,7 @@ from pathlib import Path
 
 from src.exception import CustomException
 from src.logger import logger
-from src.pipeline.prediction_pipeline import (
-    CustomData,
-    PredictionPipeline,
-)
+from src.pipeline.prediction_pipeline import CustomData, PredictionPipeline
 
 
 def main():
@@ -24,16 +21,12 @@ def main():
         logger.info("Using model directory: %s", model_dir.resolve())
 
         if not model_dir.exists():
-            raise FileNotFoundError(
-                f"Model directory not found: {model_dir.resolve()}"
-            )
+            raise FileNotFoundError(f"Model directory not found: {model_dir.resolve()}")
 
         mlmodel_file = model_dir / "MLmodel"
 
         if not mlmodel_file.exists():
-            raise FileNotFoundError(
-                f"MLmodel file not found: {mlmodel_file.resolve()}"
-            )
+            raise FileNotFoundError(f"MLmodel file not found: {mlmodel_file.resolve()}")
 
         logger.info("MLmodel file found.")
 

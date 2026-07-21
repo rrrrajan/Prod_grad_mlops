@@ -1,5 +1,5 @@
-from src.config.configuration import ConfigurationManager
 from src.components.data_validation import DataValidation
+from src.config.configuration import ConfigurationManager
 
 config = ConfigurationManager()
 

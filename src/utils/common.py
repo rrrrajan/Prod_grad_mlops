@@ -1,13 +1,13 @@
-from pathlib import Path
-from src.logger import logger
-import sys
 import json
-import yaml
-import joblib
-
+import sys
+from pathlib import Path
 from typing import Any
 
+import joblib
+import yaml
+
 from src.exception import CustomException
+from src.logger import logger
 
 
 def read_yaml(path_to_yaml: Path) -> dict[str, Any]:
@@ -26,7 +26,7 @@ def read_yaml(path_to_yaml: Path) -> dict[str, Any]:
     """
 
     try:
-        with open(path_to_yaml, "r") as yaml_file:
+        with open(path_to_yaml) as yaml_file:
             return yaml.safe_load(yaml_file)
 
     except Exception as e:
@@ -163,7 +163,7 @@ def load_json(file_path: Path) -> dict:
     try:
         logger.info("Loading JSON file from: %s", file_path)
 
-        with open(file_path, "r") as json_file:
+        with open(file_path) as json_file:
             return json.load(json_file)
 
     except Exception as e:
