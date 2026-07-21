@@ -5,17 +5,10 @@ from datetime import datetime
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import (
-    ConfusionMatrixDisplay,
-    RocCurveDisplay,
-    accuracy_score,
-    classification_report,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-)
+from sklearn.metrics import (ConfusionMatrixDisplay, RocCurveDisplay,
+                             accuracy_score, classification_report,
+                             confusion_matrix, f1_score, precision_score,
+                             recall_score, roc_auc_score)
 from sklearn.pipeline import Pipeline
 
 from src.entity.config_entity import ModelEvaluationConfig
