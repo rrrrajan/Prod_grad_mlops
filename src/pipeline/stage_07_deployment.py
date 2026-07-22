@@ -30,14 +30,15 @@ class DeploymentPipeline:
             deployment = Deployment(deployment_config)
 
             # Step 1: Connect to MLflow
-            deployment.connect_to_mlflow()
+            # deployment.connect_to_mlflow()
+            deployment.prepare_model()
 
             # Step 2: Get latest registered model
-            latest = deployment.get_latest_model_version()
+            # latest = deployment.get_latest_model_version()
 
-            print(f"Version : {latest.version}")
-            print(f"Run ID  : {latest.run_id}")
-            print(f"Stage   : {latest.current_stage}")
+            # print(f"Version : {latest.version}")
+            # print(f"Run ID  : {latest.run_id}")
+            # print(f"Stage   : {latest.current_stage}")
 
             logger.info(f">>>>>> Stage completed: {STAGE_NAME} <<<<<<\n")
 

@@ -253,6 +253,17 @@ jobs:
           echo "Looking specifically for artifacts:"
           find . -type d -name artifacts
 
+      - name: Download Registered Model
+        run: |
+          python -m src.pipeline.stage_07_deployment
+
+      - name: Verify Downloaded Deployment Model
+        run: |
+          echo "Deployment directory:"
+          find artifacts/deployment -maxdepth 3
+
+          test -f artifacts/deployment/downloaded_model/MLmodel
+
       - name: Run Integration Tests
         run: |
           pytest tests/integration \

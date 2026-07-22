@@ -467,6 +467,8 @@ class Deployment:
             model_info["version"],
         )
 
+        self.prepare_model()
+
         self.verify_docker()
 
         self.verify_image()
@@ -557,3 +559,21 @@ class Deployment:
         except Exception as e:
             logger.exception("Failed to download registered model.")
             raise CustomException(e, sys)
+
+    def prepare_model(self) -> None:
+        """
+        Download the latest registered model from MLflow.
+        Intended for CI/integration tests.
+        """
+
+        logger.info("Preparing deployment model...")
+
+        self.connect_to_mlflow()
+
+        model_info = self.download_registered_model()
+
+        logger.info(
+            "Downloaded model version %s to %s",
+            model_info["version"],
+            model_info["path"],
+        )
