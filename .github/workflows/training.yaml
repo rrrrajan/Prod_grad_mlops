@@ -79,6 +79,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
+          pip install pytest pytest-cov
 
           pip install \
             mlflow \
