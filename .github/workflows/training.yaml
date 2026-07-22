@@ -160,6 +160,12 @@ jobs:
         run: |
           python -m src.pipeline.training
 
+      - name: Show artifacts before upload
+        run: |
+          pwd
+          echo "Artifacts tree:"
+          find artifacts -maxdepth 4
+
       - name: Upload Training Artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -230,7 +236,20 @@ jobs:
 
       - name: Verify Downloaded Artifacts
         run: |
-          ls -R artifacts
+          echo "Current directory:"
+          pwd
+
+          echo ""
+          echo "Repository root:"
+          ls -la
+
+          echo ""
+          echo "Recursive tree:"
+          find . -maxdepth 4
+
+          echo ""
+          echo "Looking specifically for artifacts:"
+          find . -type d -name artifacts
 
       - name: Run Integration Tests
         run: |
