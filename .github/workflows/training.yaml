@@ -157,15 +157,27 @@ jobs:
       - name: Verify MLflow Server
         run: |
           curl --fail http://127.0.0.1:5000
+
       - name: Run Training Pipeline
         run: |
           python -m src.pipeline.training
 
-      - name: Show artifacts before upload
+      - name: Download Registered Model
+        run: |
+          python -m src.pipeline.stage_07_deployment
+
+      - name: Verify Downloaded Deployment Model
+        run: |
+          echo "Deployment directory:"
+          find artifacts/deployment -maxdepth 3
+
+          test -f artifacts/deployment/downloaded_model/MLmodel
+
+      - name: Show Artifacts Before Upload
         run: |
           pwd
           echo "Artifacts tree:"
-          find artifacts -maxdepth 4
+          find artifacts -maxdepth 5
 
       - name: Upload Training Artifacts
         if: always()
@@ -173,8 +185,7 @@ jobs:
         with:
           name: training-artifacts
           retention-days: 7
-          path: |
-            artifacts/
+          path: artifacts/
 
       - name: Upload Logs
         if: always()
@@ -242,25 +253,11 @@ jobs:
           pwd
 
           echo ""
-          echo "Repository root:"
-          ls -la
+          echo "Artifacts tree:"
+          find artifacts -maxdepth 5
 
           echo ""
-          echo "Recursive tree:"
-          find . -maxdepth 4
-
-          echo ""
-          echo "Looking specifically for artifacts:"
-          find . -type d -name artifacts
-
-      - name: Download Registered Model
-        run: |
-          python -m src.pipeline.stage_07_deployment
-
-      - name: Verify Downloaded Deployment Model
-        run: |
-          echo "Deployment directory:"
-          find artifacts/deployment -maxdepth 3
+          echo "Checking deployment model..."
 
           test -f artifacts/deployment/downloaded_model/MLmodel
 
@@ -279,6 +276,7 @@ jobs:
             echo "- ✅ Model training completed"
             echo "- ✅ MLflow server started"
             echo "- ✅ Model registered"
-            echo "- ✅ Artifacts downloaded"
+            echo "- ✅ Deployment model downloaded"
+            echo "- ✅ Artifacts uploaded"
             echo "- ✅ Integration tests completed"
           } >> $GITHUB_STEP_SUMMARY
