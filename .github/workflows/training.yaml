@@ -276,6 +276,26 @@ jobs:
           echo "Files:"
           find . -type f | head -200
 
+      - name: Verify MLflow is ready
+        run: |
+          python - <<'PY'
+          import mlflow
+          import time
+
+          mlflow.set_tracking_uri("http://127.0.0.1:5000")
+
+          for i in range(30):
+              try:
+                  mlflow.search_experiments()
+                  print("MLflow ready")
+                  break
+              except Exception as e:
+                  print(e)
+                  time.sleep(2)
+          else:
+              raise RuntimeError("MLflow never became ready")
+          PY
+
       - name: Run Training Integration Tests
         run: |
           pytest \
