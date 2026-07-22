@@ -50,10 +50,11 @@ jobs:
           - 3306:3306
 
         options: >-
-          --health-cmd="mysqladmin ping -h localhost"
+          --health-cmd="mysqladmin ping -h127.0.0.1 -uroot -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=12
+          --command="--log-bin-trust-function-creators=1"
 
     steps:
       - name: Checkout Repository
@@ -107,12 +108,12 @@ jobs:
       - name: Start MLflow Server
         run: |
 
-          mkdir -p mlruns
+          mkdir -p "$GITHUB_WORKSPACE/mlruns"
 
           nohup mlflow server \
             --backend-store-uri mysql+pymysql://mlflow:mlflow@127.0.0.1:3306/mlflow \
-            --default-artifact-root ./mlruns \
-            --host 0.0.0.0 \
+            --default-artifact-root "$GITHUB_WORKSPACE/mlruns" \
+            --host 127.0.0.1 \
             --port 5000 \
             > mlflow.log 2>&1 &
 
@@ -124,15 +125,24 @@ jobs:
           until curl --silent http://127.0.0.1:5000 >/dev/null
           do
             echo "Waiting for MLflow..."
+            if [ -f mlflow.log ]; then
+                echo "========== Last 50 lines of mlflow.log =========="
+                tail -50 mlflow.log
+                echo "==============================================="
+            fi
             sleep 2
           done
 
           '
 
+      - name: Check MLflow Process
+        run: |
+          sleep 5
+          ps -ef | grep mlflow || true
+
       - name: Verify MLflow Server
         run: |
-          curl http://127.0.0.1:5000
-
+          curl --fail http://127.0.0.1:5000
       - name: Run Training Pipeline
         run: |
           python -m src.pipeline.training
