@@ -276,6 +276,53 @@ jobs:
           echo "Files:"
           find . -type f | head -200
 
+      - name: Check MLflow Process
+        run: |
+          sleep 5
+
+          echo "Running processes:"
+          ps -ef | grep mlflow || true
+
+          echo ""
+          echo "MLflow log:"
+          cat mlflow.log || true
+
+      - name: Verify MLflow UI is Ready
+        run: |
+          echo "Waiting for MLflow..."
+
+          for i in {1..60}; do
+
+            if curl -fs http://127.0.0.1:5000/ > /dev/null; then
+              echo "MLflow is ready."
+              exit 0
+            fi
+
+            echo "Attempt $i/60"
+
+            if [ -f mlflow.log ]; then
+              tail -20 mlflow.log
+            fi
+
+            sleep 2
+
+          done
+
+          echo ""
+          echo "MLflow failed to start."
+          echo ""
+
+          cat mlflow.log
+
+          exit 1
+
+      - name: Upload MLflow Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlflow-log
+          path: mlflow.log
+
       - name: Verify MLflow is ready
         run: |
           python - <<'PY'
