@@ -173,30 +173,13 @@ jobs:
 
           test -f artifacts/deployment/downloaded_model/MLmodel
 
-      - name: Show Artifacts Before Upload
-        run: |
-          echo "PWD:"
-          pwd
-
-          echo ""
-          echo "Repository tree:"
-          find . -maxdepth 4
-
-          echo ""
-          echo "Artifacts:"
-          find artifacts -maxdepth 5
-
-          echo ""
-          echo "Deployment:"
-          find artifacts/deployment -maxdepth 5 || true
-
       - name: Upload Training Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: training-artifacts
-          retention-days: 7
           path: artifacts/
+          retention-days: 7
 
       - name: Upload Logs
         if: always()
@@ -256,38 +239,23 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: training-artifacts
-          path: artifacts
+          path: .
 
-      - name: Inspect Downloaded Artifacts
+      - name: Verify Downloaded Artifacts
         run: |
-          echo "Current directory:"
-          pwd
+          echo "Artifacts:"
+          find artifacts -maxdepth 5
 
-          echo ""
-          echo "Everything after download:"
-          find . -maxdepth 6
-
-          echo ""
-          echo "Contents of artifacts directory:"
-          find artifacts -maxdepth 6 || true
-
-          echo ""
-          echo "Searching for MLmodel..."
-          find . -name MLmodel
-
-          echo ""
-          echo "Searching for model.pkl..."
-          find . -name model.pkl
-
-          echo ""
-          echo "Searching for downloaded_model..."
-          find . -name downloaded_model
+          test -f artifacts/model_trainer/model.pkl
+          test -f artifacts/model_evaluation/metrics.json
+          test -f artifacts/deployment/downloaded_model/MLmodel
 
       - name: Run Integration Tests
         run: |
           pytest tests/integration \
-            -v \
-            -x
+           -v \
+           --cov=src \
+           --cov-report=term-missing
 
       - name: Workflow Summary
         if: always()
@@ -299,6 +267,6 @@ jobs:
             echo "- ✅ MLflow server started"
             echo "- ✅ Model registered"
             echo "- ✅ Deployment model downloaded"
-            echo "- ✅ Artifacts uploaded"
-            echo "- ✅ Integration tests completed"
+            echo "- ✅ Training artifacts uploaded"
+            echo "- ✅ Integration tests passed"
           } >> $GITHUB_STEP_SUMMARY
