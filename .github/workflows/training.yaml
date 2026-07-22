@@ -256,21 +256,32 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: training-artifacts
-          path: .
+          path: artifacts
 
-      - name: Verify Downloaded Artifacts
+      - name: Inspect Downloaded Artifacts
         run: |
           echo "Current directory:"
           pwd
 
           echo ""
-          echo "Artifacts tree:"
-          find artifacts -maxdepth 5
+          echo "Everything after download:"
+          find . -maxdepth 6
 
           echo ""
-          echo "Checking deployment model..."
+          echo "Contents of artifacts directory:"
+          find artifacts -maxdepth 6 || true
 
-          test -f artifacts/deployment/downloaded_model/MLmodel
+          echo ""
+          echo "Searching for MLmodel..."
+          find . -name MLmodel
+
+          echo ""
+          echo "Searching for model.pkl..."
+          find . -name model.pkl
+
+          echo ""
+          echo "Searching for downloaded_model..."
+          find . -name downloaded_model
 
       - name: Run Integration Tests
         run: |
