@@ -54,7 +54,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=12
-          --command="--log-bin-trust-function-creators=1"
 
     steps:
       - name: Checkout Repository
@@ -104,6 +103,20 @@ jobs:
           done
 
           echo "MySQL is ready."
+
+      - name: Enable MySQL trigger creators
+        run: |
+          mysql \
+            -h127.0.0.1 \
+            -uroot \
+            -proot \
+            -e "SET GLOBAL log_bin_trust_function_creators = 1;"
+
+          mysql \
+            -h127.0.0.1 \
+            -uroot \
+            -proot \
+            -e "SHOW VARIABLES LIKE 'log_bin_trust_function_creators';"
 
       - name: Start MLflow Server
         run: |
