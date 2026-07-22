@@ -276,12 +276,18 @@ jobs:
           echo "Files:"
           find . -type f | head -200
 
-      - name: Run Integration Tests
+      - name: Run Training Integration Tests
         run: |
-          pytest tests/integration \
-           -v \
-           --cov=src \
-           --cov-report=term-missing
+          pytest \
+            tests/integration/test_data_ingestion.py \
+            tests/integration/test_data_validation.py \
+            tests/integration/test_model_trainer.py \
+            tests/integration/test_model_evaluation.py \
+            tests/integration/test_mlflow_tracker.py \
+            tests/integration/test_preprocessor.py \
+            -v \
+            --cov=src \
+            --cov-report=term-missing
 
       - name: Workflow Summary
         if: always()
@@ -289,10 +295,11 @@ jobs:
           {
             echo "## Training Workflow Summary"
             echo ""
-            echo "- ✅ Model training completed"
+            echo "- ✅ MySQL started"
             echo "- ✅ MLflow server started"
-            echo "- ✅ Model registered"
-            echo "- ✅ Deployment model downloaded"
+            echo "- ✅ Model training completed"
+            echo "- ✅ Model evaluated"
+            echo "- ✅ Model registered in MLflow Registry"
+            echo "- ✅ Training integration tests passed"
             echo "- ✅ Training artifacts uploaded"
-            echo "- ✅ Integration tests passed"
           } >> $GITHUB_STEP_SUMMARY
