@@ -175,9 +175,20 @@ jobs:
 
       - name: Show Artifacts Before Upload
         run: |
+          echo "PWD:"
           pwd
-          echo "Artifacts tree:"
+
+          echo ""
+          echo "Repository tree:"
+          find . -maxdepth 4
+
+          echo ""
+          echo "Artifacts:"
           find artifacts -maxdepth 5
+
+          echo ""
+          echo "Deployment:"
+          find artifacts/deployment -maxdepth 5 || true
 
       - name: Upload Training Artifacts
         if: always()
