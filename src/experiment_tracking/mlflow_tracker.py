@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from pathlib import Path
@@ -7,7 +8,6 @@ from typing import Any
 
 import mlflow
 import mlflow.sklearn
-import os
 
 from src.entity.config_entity import MLflowConfig
 from src.experiment_tracking.experiment_tracker import ExperimentTracker
@@ -129,7 +129,7 @@ class MLflowTracker(ExperimentTracker):
         """
         Log the trained model to MLflow.
         """
-        
+
         if not self.config.enabled:
             return
 

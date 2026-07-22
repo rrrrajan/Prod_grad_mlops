@@ -2,7 +2,6 @@ import sys
 
 from src.exception import CustomException
 from src.logger import logger
-
 from src.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 from src.pipeline.stage_02_data_validation import DataValidationTrainingPipeline
 from src.pipeline.stage_03_data_transformation import DataTransformationTrainingPipeline
@@ -63,6 +62,7 @@ def main() -> None:
     logger.info("=" * 60)
     logger.info("Training Pipeline completed successfully.")
     logger.info("=" * 60)
-    
+
+
 if __name__ == "__main__":
     main()

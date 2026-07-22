@@ -2,7 +2,6 @@ import sys
 
 from src.exception import CustomException
 from src.logger import logger
-
 from src.pipeline.stage_07_deployment import DeploymentPipeline
 
 
@@ -48,6 +47,7 @@ def main() -> None:
     logger.info("=" * 60)
     logger.info("Deployment Pipeline completed successfully.")
     logger.info("=" * 60)
+
 
 if __name__ == "__main__":
     main()
