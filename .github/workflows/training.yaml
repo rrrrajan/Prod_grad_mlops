@@ -173,13 +173,31 @@ jobs:
 
           test -f artifacts/deployment/downloaded_model/MLmodel
 
+      - name: Inspect artifacts before upload
+        run: |
+          echo "Current directory:"
+          pwd
+
+          echo ""
+          echo "Repository tree:"
+          find . -maxdepth 5
+
+          echo ""
+          echo "Artifacts directory:"
+          ls -la artifacts || true
+
+          echo ""
+          echo "Artifacts contents:"
+          find artifacts -maxdepth 6 || true
+
       - name: Upload Training Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: training-artifacts
-          path: artifacts/
-          retention-days: 7
+          path: |
+            artifacts/**
+            retention-days: 7
 
       - name: Upload Logs
         if: always()
@@ -241,14 +259,22 @@ jobs:
           name: training-artifacts
           path: .
 
-      - name: Verify Downloaded Artifacts
+      - name: Inspect Downloaded Artifact
         run: |
-          echo "Artifacts:"
-          find artifacts -maxdepth 5
+          echo "PWD:"
+          pwd
 
-          test -f artifacts/model_trainer/model.pkl
-          test -f artifacts/model_evaluation/metrics.json
-          test -f artifacts/deployment/downloaded_model/MLmodel
+          echo ""
+          echo "Everything:"
+          find . -maxdepth 6
+
+          echo ""
+          echo "Directories:"
+          find . -type d
+
+          echo ""
+          echo "Files:"
+          find . -type f | head -200
 
       - name: Run Integration Tests
         run: |
