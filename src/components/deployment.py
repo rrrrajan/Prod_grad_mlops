@@ -551,6 +551,20 @@ class Deployment:
                 local_path,
             )
 
+            # -----------------------------
+            # DEBUG ONLY
+            # -----------------------------
+            logger.info("Download directory: %s", download_dir)
+
+            logger.info("Directory tree after download:")
+
+            for p in download_dir.rglob("*"):
+                logger.info("  %s", p)
+
+            # -----------------------------
+            # END DEBUG
+            # -----------------------------
+
             return {
                 "version": latest.version,
                 "path": Path(local_path),
@@ -577,3 +591,14 @@ class Deployment:
             model_info["version"],
             model_info["path"],
         )
+
+        from pathlib import Path
+
+        path = Path(model_info["path"])
+
+        logger.info("Downloaded path exists: %s", path.exists())
+
+        if path.exists():
+            logger.info("Downloaded files:")
+            for p in path.rglob("*"):
+                logger.info("  %s", p)

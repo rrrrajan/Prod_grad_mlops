@@ -26,22 +26,23 @@ class DeploymentPipeline:
             config = ConfigurationManager()
 
             deployment_config = config.get_deployment_config()
+            mlflow_config = config.get_mlflow_config()
 
-            deployment = Deployment(deployment_config)
+            deployment = Deployment(
+                deployment_config=deployment_config,
+                mlflow_config=mlflow_config,
+            )
 
-            # Step 1: Connect to MLflow
-            # deployment.connect_to_mlflow()
+            # Connect to MLflow and download the latest registered model
             deployment.prepare_model()
-
-            # Step 2: Get latest registered model
-            # latest = deployment.get_latest_model_version()
-
-            # print(f"Version : {latest.version}")
-            # print(f"Run ID  : {latest.run_id}")
-            # print(f"Stage   : {latest.current_stage}")
 
             logger.info(f">>>>>> Stage completed: {STAGE_NAME} <<<<<<\n")
 
         except Exception as e:
             logger.exception(e)
             raise CustomException(e, sys)
+
+
+if __name__ == "__main__":
+    obj = DeploymentPipeline()
+    obj.run()
