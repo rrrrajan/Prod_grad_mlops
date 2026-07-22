@@ -56,7 +56,7 @@ model_evaluation:
 
   log_model: true
   register_model: true
-  registered_model_name: customer_churn_model
+  registered_model_name: CustomerChurnModell
 
   experiment_name: customer-churn-mlops
   run_name: model_evaluation

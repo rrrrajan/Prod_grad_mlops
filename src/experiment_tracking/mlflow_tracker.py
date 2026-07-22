@@ -7,6 +7,7 @@ from typing import Any
 
 import mlflow
 import mlflow.sklearn
+import os
 
 from src.entity.config_entity import MLflowConfig
 from src.experiment_tracking.experiment_tracker import ExperimentTracker
@@ -21,9 +22,25 @@ class MLflowTracker(ExperimentTracker):
     def __init__(self, config: MLflowConfig) -> None:
         self.config = config
 
-        if self.config.enabled:
-            mlflow.set_tracking_uri(self.config.tracking_uri)
-            mlflow.set_experiment(self.config.experiment_name)
+        if not self.config.enabled:
+            return
+
+        tracking_uri = os.getenv(
+            "MLFLOW_TRACKING_URI",
+            self.config.tracking_uri,
+        )
+
+        registry_uri = os.getenv(
+            "MLFLOW_REGISTRY_URI",
+            self.config.registry_uri,
+        )
+
+        logger.info("MLflow Tracking URI : %s", tracking_uri)
+        logger.info("MLflow Registry URI : %s", registry_uri)
+
+        mlflow.set_tracking_uri(tracking_uri)
+        mlflow.set_registry_uri(registry_uri)
+        mlflow.set_experiment(self.config.experiment_name)
 
     @contextmanager
     def run(self, run_name: str | None = None) -> Generator[None, None, None]:
@@ -112,6 +129,9 @@ class MLflowTracker(ExperimentTracker):
         """
         Log the trained model to MLflow.
         """
+        
+        if not self.config.enabled:
+            return
 
         logger.info("Logging trained model to MLflow.")
 
