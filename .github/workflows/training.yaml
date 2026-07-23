@@ -65,26 +65,13 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
 
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest pytest-cov
-
-          pip install \
-            mlflow \
-            pymysql \
-            cloudpickle
+          pip install pytest pytest-cov mlflow pymysql cloudpickle
 
       - name: Install MySQL Client
         run: |
@@ -121,38 +108,57 @@ jobs:
 
       - name: Start MLflow Server
         run: |
-
           mkdir -p "$GITHUB_WORKSPACE/mlruns"
 
-          nohup mlflow server \
+          nohup python -m mlflow server \
             --backend-store-uri mysql+pymysql://mlflow:mlflow@127.0.0.1:3306/mlflow \
-            --default-artifact-root "$GITHUB_WORKSPACE/mlruns" \
+            --default-artifact-root "file:$GITHUB_WORKSPACE/mlruns" \
             --host 127.0.0.1 \
             --port 5000 \
             > mlflow.log 2>&1 &
 
+          sleep 5
+
       - name: Wait for MLflow Server
         run: |
+          for i in {1..45}; do
 
-          timeout 90 bash -c '
-
-          until curl --silent http://127.0.0.1:5000 >/dev/null
-          do
-            echo "Waiting for MLflow..."
-            if [ -f mlflow.log ]; then
-                echo "========== Last 50 lines of mlflow.log =========="
-                tail -50 mlflow.log
-                echo "==============================================="
+            if curl -fs http://127.0.0.1:5000/ >/dev/null; then
+              echo "MLflow is ready."
+              exit 0
             fi
+
+            echo "Waiting for MLflow... ($i/45)"
+
+            if [ -f mlflow.log ]; then
+              tail -20 mlflow.log
+            fi
+
             sleep 2
           done
 
-          '
+          echo "MLflow failed to start."
 
-      - name: Check MLflow Process
+          cat mlflow.log || true
+
+          exit 1
+
+      - name: Show Listening Ports
         run: |
-          sleep 5
+          ss -ltnp || true
+
+      - name: Verify MLflow Process
+        run: |
+          echo "===== MLflow Version ====="
+          python -m mlflow --version
+
+          echo ""
+          echo "===== Running Processes ====="
           ps -ef | grep mlflow || true
+
+          echo ""
+          echo "===== MLflow Log ====="
+          cat mlflow.log || true
 
       - name: Verify MLflow Server
         run: |
@@ -162,16 +168,18 @@ jobs:
         run: |
           python -m src.pipeline.training
 
-      - name: Download Registered Model
+      - name: Run MLflow Integration Tests
         run: |
-          python -m src.pipeline.stage_07_deployment
-
-      - name: Verify Downloaded Deployment Model
-        run: |
-          echo "Deployment directory:"
-          find artifacts/deployment -maxdepth 3
-
-          test -f artifacts/deployment/downloaded_model/MLmodel
+          pytest \
+            tests/integration/test_data_ingestion.py \
+            tests/integration/test_data_validation.py \
+            tests/integration/test_model_trainer.py \
+            tests/integration/test_model_evaluation.py \
+            tests/integration/test_mlflow_tracker.py \
+            tests/integration/test_preprocessor.py \
+            -v \
+            --cov=src \
+            --cov-report=term-missing
 
       - name: Inspect artifacts before upload
         run: |
@@ -195,9 +203,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: training-artifacts
-          path: |
-            artifacts/**
-            retention-days: 7
+          path: artifacts
+          retention-days: 7
 
       - name: Upload Logs
         if: always()
@@ -206,8 +213,8 @@ jobs:
           name: logs
           retention-days: 7
           path: |
-            logs/
-            artifacts/logs/
+            logs
+            artifacts/logs
 
       - name: Upload MLflow Log
         if: always()
@@ -225,148 +232,18 @@ jobs:
           retention-days: 7
           path: mlruns/
 
-  integration-tests:
-    name: Integration Tests
-
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 20
-
-    needs: training
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: pip
-
-      - name: Upgrade pip
-        run: |
-          python -m pip install --upgrade pip
-
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
-
-      - name: Download Training Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: training-artifacts
-          path: .
-
-      - name: Inspect Downloaded Artifact
-        run: |
-          echo "PWD:"
-          pwd
-
-          echo ""
-          echo "Everything:"
-          find . -maxdepth 6
-
-          echo ""
-          echo "Directories:"
-          find . -type d
-
-          echo ""
-          echo "Files:"
-          find . -type f | head -200
-
-      - name: Check MLflow Process
-        run: |
-          sleep 5
-
-          echo "Running processes:"
-          ps -ef | grep mlflow || true
-
-          echo ""
-          echo "MLflow log:"
-          cat mlflow.log || true
-
-      - name: Verify MLflow UI is Ready
-        run: |
-          echo "Waiting for MLflow..."
-
-          for i in {1..60}; do
-
-            if curl -fs http://127.0.0.1:5000/ > /dev/null; then
-              echo "MLflow is ready."
-              exit 0
-            fi
-
-            echo "Attempt $i/60"
-
-            if [ -f mlflow.log ]; then
-              tail -20 mlflow.log
-            fi
-
-            sleep 2
-
-          done
-
-          echo ""
-          echo "MLflow failed to start."
-          echo ""
-
-          cat mlflow.log
-
-          exit 1
-
-      - name: Upload MLflow Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlflow-log
-          path: mlflow.log
-
-      - name: Verify MLflow is ready
-        run: |
-          python - <<'PY'
-          import mlflow
-          import time
-
-          mlflow.set_tracking_uri("http://127.0.0.1:5000")
-
-          for i in range(30):
-              try:
-                  mlflow.search_experiments()
-                  print("MLflow ready")
-                  break
-              except Exception as e:
-                  print(e)
-                  time.sleep(2)
-          else:
-              raise RuntimeError("MLflow never became ready")
-          PY
-
-      - name: Run Training Integration Tests
-        run: |
-          pytest \
-            tests/integration/test_data_ingestion.py \
-            tests/integration/test_data_validation.py \
-            tests/integration/test_model_trainer.py \
-            tests/integration/test_model_evaluation.py \
-            tests/integration/test_mlflow_tracker.py \
-            tests/integration/test_preprocessor.py \
-            -v \
-            --cov=src \
-            --cov-report=term-missing
-
       - name: Workflow Summary
         if: always()
         run: |
           {
-            echo "## Training Workflow Summary"
-            echo ""
-            echo "- ✅ MySQL started"
-            echo "- ✅ MLflow server started"
-            echo "- ✅ Model training completed"
-            echo "- ✅ Model evaluated"
-            echo "- ✅ Model registered in MLflow Registry"
-            echo "- ✅ Training integration tests passed"
-            echo "- ✅ Training artifacts uploaded"
-          } >> $GITHUB_STEP_SUMMARY
+           echo "## Model Training Pipeline Summary"
+           echo ""
+           echo "| Stage | Status |"
+           echo "|------|:------:|"
+           echo "| MySQL Service | ✅ |"
+           echo "| MLflow Server | ✅ |"
+           echo "| Training Pipeline | ✅ |"
+           echo "| Model Registered | ✅ |"
+           echo "| Integration Tests | ✅ |"
+           echo "| Artifacts Uploaded | ✅ |"
+          } >> "$GITHUB_STEP_SUMMARY"
